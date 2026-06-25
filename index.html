@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hangul Garden</title>
+<style>
+/* ============================================================
+   1. CSS VARIABLES — Design System
+   ============================================================ */
+:root {
+  --lavender-50:  #f5f3ff;
+  --lavender-100: #ede9fe;
+  --lavender-200: #ddd6fe;
+  --lavender-300: #c4b5fd;
+  --lavender-400: #a78bfa;
+  --iris:         #7c3aed;
+  --wisteria:     #8b5cf6;
+  --sage:         #7c9e87;
+  --mint:         #a8d5b5;
+  --ink:          #1e1b2e;
+  --ink-soft:     #4a4565;
+  --surface:      #faf9ff;
+  --surface-card: #ffffff;
+  --border:       rgba(167,139,250,0.18);
+  --shadow-soft:  0 4px 24px rgba(124,58,237,0.07);
+  --shadow-card:  0 8px 40px rgba(124,58,237,0.10);
+  --radius-card:  20px;
+  --radius-btn:   12px;
+  --text-primary:  var(--ink);
+  --text-secondary:var(--ink-soft);
+  --text-accent:   var(--wisteria);
+  --transition: 0.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="dark"] {
+  --surface:       #13101f;
+  --surface-card:  #1e1929;
+  --border:        rgba(167,139,250,0.13);
+  --shadow-soft:   0 4px 24px rgba(0,0,0,0.3);
+  --shadow-card:   0 8px 40px rgba(0,0,0,0.4);
+  --text-primary:  #e9e5ff;
+  --text-secondary:#a89fd4;
+  --lavender-50:   #1e1929;
+  --lavender-100:  #261e3a;
+  --lavender-200:  #352a4f;
+  --ink:           #e9e5ff;
+  --ink-soft:      #a89fd4;
+}
+
+/* ============================================================
+   2. RESET & BASE
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{font-size:16px;scroll-behavior:smooth;}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  background:var(--surface);color:var(--text-primary);
+  min-height:100vh;overflow-x:hidden;position:relative;
+}
+
+/* ============================================================
+   3. BACKGROUND BLOBS
+   ============================================================ */
+.bg-blobs{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:0.18;
+  animation:blobDrift 22s ease-in-out infinite alternate;}
+.blob-1{width:520px;height:520px;background:var(--lavender-300);top:-10%;left:-8%;animation-duration:24s;}
+.blob-2{width:380px;height:380px;background:var(--mint);bottom:5%;right:-5%;animation-duration:30s;animation-delay:-8s;}
+.blob-3{width:280px;height:280px;background:var(--lavender-400);top:40%;right:15%;animation-duration:20s;animation-delay:-14s;}
+[data-theme="dark"] .blob{opacity:0.09;}
+@keyframes blobDrift{
+  0%{transform:translate(0,0) scale(1);}
+  33%{transform:translate(30px,-20px) scale(1.05);}
+  66%{transform:translate(-20px,30px) scale(0.97);}
+  100%{transform:translate(15px,10px) scale(1.03);}
+}
+
+/* ============================================================
+   4. LAYOUT
+   ============================================================ */
+#app{position:relative;z-index:1;max-width:820px;margin:0 auto;padding:0 16px 60px;}
+
+/* ============================================================
+   5. HEADER
+   ============================================================ */
+.header{padding:28px 0 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.header-brand{display:flex;align-items:center;gap:10px;}
+.brand-title{font-size:1.35rem;font-weight:700;letter-spacing:-0.02em;color:var(--wisteria);}
+.brand-sub{font-size:0.72rem;color:var(--text-secondary);letter-spacing:0.06em;text-transform:uppercase;margin-top:1px;}
+.header-right{display:flex;align-items:center;gap:14px;}
+.garden-badge{display:flex;align-items:center;gap:6px;background:var(--lavender-100);border:1px solid var(--border);
+  border-radius:30px;padding:6px 14px;font-size:0.78rem;color:var(--wisteria);font-weight:600;}
+.due-badge{background:var(--lavender-200);border-radius:20px;padding:4px 10px;font-size:0.72rem;color:var(--iris);font-weight:700;cursor:pointer;}
+.icon-btn{background:var(--lavender-100);border:1px solid var(--border);border-radius:10px;width:36px;height:36px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;
+  transition:background var(--transition),box-shadow var(--transition);color:var(--wisteria);}
+.icon-btn:hover{background:var(--lavender-200);box-shadow:var(--shadow-soft);}
+
+/* ============================================================
+   6. TABS
+   ============================================================ */
+.tabs{display:flex;gap:6px;background:var(--lavender-100);border-radius:14px;padding:5px;margin-bottom:22px;}
+.tab{flex:1;padding:9px 14px;border:none;border-radius:10px;background:transparent;
+  color:var(--text-secondary);font-size:0.82rem;font-weight:600;cursor:pointer;
+  transition:background var(--transition),color var(--transition),box-shadow var(--transition);letter-spacing:0.01em;}
+.tab.active{background:var(--surface-card);color:var(--wisteria);box-shadow:0 2px 8px rgba(124,58,237,0.12);}
+.tab:hover:not(.active){color:var(--iris);}
+
+/* ============================================================
+   7. DECK SELECTOR
+   ============================================================ */
+.deck-selector{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;}
+.deck-btn{padding:7px 14px;border:1.5px solid var(--border);border-radius:30px;
+  background:var(--surface-card);color:var(--text-secondary);font-size:0.78rem;font-weight:600;
+  cursor:pointer;transition:all var(--transition);}
+.deck-btn.active{background:var(--lavender-200);border-color:var(--lavender-300);color:var(--iris);}
+.deck-btn:hover:not(.active){border-color:var(--lavender-300);color:var(--wisteria);}
+
+/* ============================================================
+   8. PROGRESS BAR
+   ============================================================ */
+.progress-row{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+.progress-bar-wrap{flex:1;height:6px;background:var(--lavender-200);border-radius:99px;overflow:hidden;}
+.progress-bar-fill{height:100%;background:linear-gradient(90deg,var(--lavender-400),var(--wisteria));
+  border-radius:99px;transition:width 0.4s cubic-bezier(.4,0,.2,1);}
+.progress-label{font-size:0.74rem;color:var(--text-secondary);font-weight:600;white-space:nowrap;}
+
+/* ============================================================
+   9. QUESTION CARD
+   ============================================================ */
+.card-wrap{margin-bottom:18px;}
+.question-card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-card);
+  box-shadow:var(--shadow-card);padding:40px 32px 32px;text-align:center;position:relative;min-height:140px;}
+@keyframes cardEnter{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.card-deck-tag{position:absolute;top:16px;left:20px;font-size:0.68rem;font-weight:700;
+  letter-spacing:0.08em;text-transform:uppercase;color:var(--text-secondary);opacity:0.7;}
+.card-audio-btn{position:absolute;top:14px;right:18px;background:var(--lavender-100);
+  border:1px solid var(--border);border-radius:8px;width:32px;height:32px;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--wisteria);
+  transition:background var(--transition);}
+.card-audio-btn:hover{background:var(--lavender-200);}
+.card-korean{font-size:82px;line-height:1.1;font-weight:300;color:var(--text-primary);
+  letter-spacing:-0.01em;margin:12px 0 8px;
+  font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  text-shadow:0 2px 16px rgba(124,58,237,0.06);}
+.card-hint{font-size:0.8rem;color:var(--text-secondary);margin-top:4px;}
+
+/* ============================================================
+   10. OPTIONS
+   ============================================================ */
+.options-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+.option-btn{background:var(--lavender-50);border:1.5px solid var(--border);border-radius:var(--radius-btn);
+  padding:14px 18px;font-size:0.95rem;font-weight:500;color:var(--text-primary);cursor:pointer;
+  transition:all var(--transition);text-align:left;line-height:1.4;}
+.option-btn:hover:not(:disabled){background:var(--lavender-100);border-color:var(--lavender-300);
+  transform:translateY(-1px);box-shadow:0 4px 14px rgba(124,58,237,0.1);}
+.option-btn.correct{background:linear-gradient(135deg,#d1fae5,#a7f3d0);border-color:#6ee7b7;color:#065f46;}
+.option-btn.wrong{background:linear-gradient(135deg,#fee2e2,#fecaca);border-color:#fca5a5;color:#991b1b;
+  animation:shakeCard 0.4s ease;}
+.option-btn:disabled{cursor:default;}
+@keyframes shakeCard{
+  0%,100%{transform:translateX(0);}
+  20%{transform:translateX(-7px);}
+  40%{transform:translateX(7px);}
+  60%{transform:translateX(-5px);}
+  80%{transform:translateX(4px);}
+}
+
+/* ============================================================
+   11. FEEDBACK CARD
+   ============================================================ */
+.feedback-card{background:var(--lavender-50);border:1px solid var(--border);border-radius:14px;
+  padding:18px 20px;margin-top:14px;position:relative;overflow:hidden;}
+.feedback-card.correct-fb{border-color:#6ee7b7;background:#f0fdf4;}
+.feedback-card.wrong-fb{border-color:#fca5a5;background:#fff5f5;}
+[data-theme="dark"] .feedback-card.correct-fb{background:#0d2a1c;border-color:#2d6a4f;}
+[data-theme="dark"] .feedback-card.wrong-fb{background:#2a0d0d;border-color:#6a2d2d;}
+.feedback-title{font-size:0.9rem;font-weight:700;margin-bottom:6px;}
+.feedback-card.correct-fb .feedback-title{color:#059669;}
+.feedback-card.wrong-fb .feedback-title{color:#dc2626;}
+.feedback-explanation{font-size:0.83rem;color:var(--text-secondary);line-height:1.6;}
+.feedback-breakdown{margin-top:10px;padding:10px 12px;background:var(--surface-card);
+  border-radius:8px;font-family:monospace;font-size:0.82rem;color:var(--text-primary);line-height:1.9;}
+.feedback-examples{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;}
+.example-chip{background:var(--lavender-100);border-radius:6px;padding:4px 10px;
+  font-size:0.8rem;color:var(--wisteria);font-weight:600;
+  font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;}
+.bloom-ripple::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(circle at center,rgba(167,139,250,0.25) 0%,transparent 70%);
+  animation:bloomRipple 0.7s ease-out forwards;}
+@keyframes bloomRipple{0%{opacity:1;}100%{opacity:0;}}
+
+/* ============================================================
+   12. NAVIGATION
+   ============================================================ */
+.nav-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px;}
+.nav-btn{display:flex;align-items:center;gap:6px;padding:9px 16px;background:var(--lavender-100);
+  border:1px solid var(--border);border-radius:var(--radius-btn);font-size:0.8rem;font-weight:600;
+  color:var(--text-secondary);cursor:pointer;transition:all var(--transition);}
+.nav-btn:hover{background:var(--lavender-200);color:var(--iris);}
+.nav-btn.primary{background:linear-gradient(135deg,var(--lavender-300),var(--wisteria));color:#fff;border-color:transparent;}
+.nav-btn.primary:hover{opacity:0.9;transform:translateY(-1px);box-shadow:0 4px 16px rgba(124,58,237,0.25);}
+
+/* ============================================================
+   13. READING DRILL
+   ============================================================ */
+.drill-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:12px;margin-bottom:20px;}
+.drill-card{background:var(--surface-card);border:1.5px solid var(--border);border-radius:14px;
+  padding:20px 14px 16px;text-align:center;cursor:pointer;transition:all var(--transition);position:relative;}
+.drill-card:hover{box-shadow:var(--shadow-card);transform:translateY(-2px);}
+.drill-korean{font-size:38px;font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  color:var(--text-primary);margin-bottom:6px;}
+.drill-roman{font-size:0.82rem;color:var(--wisteria);font-weight:600;min-height:20px;transition:opacity 0.2s;}
+.drill-roman.hidden{opacity:0;}
+.drill-rating{display:flex;gap:6px;justify-content:center;margin-top:10px;}
+.rating-btn{padding:3px 9px;border:1px solid var(--border);border-radius:20px;font-size:0.7rem;
+  font-weight:700;cursor:pointer;transition:all var(--transition);background:var(--lavender-50);color:var(--text-secondary);}
+.rating-btn.easy-r{border-color:#6ee7b7;color:#059669;}
+.rating-btn.medium-r{border-color:var(--lavender-300);color:var(--wisteria);}
+.rating-btn.hard-r{border-color:#fca5a5;color:#dc2626;}
+.rating-btn:hover{transform:scale(1.07);}
+.drill-controls{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;}
+.reveal-btn{padding:10px 20px;background:linear-gradient(135deg,var(--lavender-300),var(--wisteria));
+  border:none;border-radius:var(--radius-btn);color:#fff;font-weight:700;font-size:0.85rem;
+  cursor:pointer;transition:opacity var(--transition);}
+.reveal-btn:hover{opacity:0.88;}
+.difficulty-select{padding:8px 14px;border:1.5px solid var(--border);border-radius:var(--radius-btn);
+  background:var(--surface-card);color:var(--text-primary);font-size:0.82rem;cursor:pointer;}
+
+/* ============================================================
+   14. SPEED ROUND
+   ============================================================ */
+.speed-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.speed-timer{font-size:2rem;font-weight:700;color:var(--wisteria);font-variant-numeric:tabular-nums;}
+.speed-counter{font-size:0.85rem;color:var(--text-secondary);}
+.speed-card{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-card);
+  box-shadow:var(--shadow-card);padding:40px 24px 28px;text-align:center;animation:cardEnter 0.2s ease both;}
+.speed-korean{font-size:90px;font-family:"Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",system-ui,sans-serif;
+  font-weight:300;color:var(--text-primary);margin-bottom:24px;}
+.speed-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.speed-summary{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-card);
+  box-shadow:var(--shadow-card);padding:40px 30px;text-align:center;}
+.speed-summary h2{font-size:1.6rem;margin-bottom:8px;color:var(--wisteria);}
+.summary-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0;}
+.stat-box{background:var(--lavender-50);border:1px solid var(--border);border-radius:14px;padding:18px 10px;}
+.stat-val{font-size:2rem;font-weight:700;color:var(--wisteria);}
+.stat-lbl{font-size:0.72rem;color:var(--text-secondary);margin-top:2px;text-transform:uppercase;letter-spacing:0.05em;}
+
+/* ============================================================
+   15. GARDEN
+   ============================================================ */
+.garden-panel{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-card);
+  padding:26px 24px;margin-bottom:22px;box-shadow:var(--shadow-soft);}
+.garden-title{font-size:0.78rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;
+  color:var(--text-secondary);margin-bottom:14px;}
+.garden-svg-wrap{width:100%;overflow:hidden;border-radius:10px;
+  background:linear-gradient(160deg,var(--lavender-50) 0%,#eefaf2 100%);padding:14px 10px 6px;}
+[data-theme="dark"] .garden-svg-wrap{background:linear-gradient(160deg,var(--lavender-100) 0%,#0d2018 100%);}
+
+/* ============================================================
+   16. SETTINGS
+   ============================================================ */
+.settings-overlay{position:fixed;inset:0;z-index:100;background:rgba(30,27,46,0.45);
+  backdrop-filter:blur(4px);display:flex;align-items:center;justify-content:center;
+  animation:fadeIn 0.2s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.settings-panel{background:var(--surface-card);border:1px solid var(--border);border-radius:20px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.2);padding:32px 28px;width:min(420px,95vw);
+  animation:cardEnter 0.25s ease;}
+.settings-panel h2{font-size:1.1rem;margin-bottom:22px;color:var(--text-primary);}
+.setting-row{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 0;border-bottom:1px solid var(--border);}
+.setting-row:last-of-type{border-bottom:none;}
+.setting-label{font-size:0.88rem;color:var(--text-primary);}
+.setting-sub{font-size:0.72rem;color:var(--text-secondary);margin-top:2px;}
+.toggle{width:46px;height:26px;border-radius:99px;background:var(--lavender-200);cursor:pointer;
+  position:relative;transition:background 0.2s;border:none;}
+.toggle.on{background:var(--wisteria);}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;
+  border-radius:50%;background:#fff;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.2);}
+.toggle.on::after{transform:translateX(20px);}
+.danger-btn{padding:9px 16px;border-radius:10px;border:1.5px solid #fca5a5;background:transparent;
+  color:#dc2626;font-size:0.82rem;font-weight:700;cursor:pointer;transition:all var(--transition);
+  margin-top:18px;width:100%;}
+.danger-btn:hover{background:#fee2e2;}
+.close-btn{margin-top:16px;width:100%;padding:10px;border-radius:10px;
+  border:1px solid var(--border);background:var(--lavender-100);color:var(--text-secondary);
+  font-size:0.85rem;font-weight:600;cursor:pointer;}
+.close-btn:hover{background:var(--lavender-200);}
+
+/* ============================================================
+   17. UTILITY
+   ============================================================ */
+.hidden{display:none!important;}
+.section{display:none;}
+.section.active{display:block;}
+.text-center{text-align:center;}
+
+/* ============================================================
+   18. RESPONSIVE
+   ============================================================ */
+@media(max-width:540px){
+  .card-korean{font-size:60px;}
+  .speed-korean{font-size:68px;}
+  .options-grid{grid-template-columns:1fr;}
+  .speed-options{grid-template-columns:1fr;}
+  .summary-stats{grid-template-columns:1fr;}
+  .tabs .tab{font-size:0.72rem;padding:8px 6px;}
+  .question-card{padding:30px 16px 24px;}
+}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:0.01ms!important;transition-duration:0.01ms!important;}
+}
+/* Missing classes */
+.drill-item{background:var(--surface-card);border:1px solid var(--border);border-radius:var(--radius-card);
+  padding:20px 16px;text-align:center;cursor:pointer;transition:transform var(--transition),box-shadow var(--transition);
+  box-shadow:var(--shadow-soft);}
+.drill-item:hover{transform:translateY(-2px);box-shadow:var(--shadow-card);}
+.deck-stat-card{background:var(--surface-card);border:1px solid var(--border);border-radius:14px;
+  padding:12px 14px;box-shadow:var(--shadow-soft);}
+.deck-stat-name{font-size:0.78rem;font-weight:600;color:var(--text-secondary);margin-bottom:6px;}
+.deck-stat-bar{height:6px;background:var(--lavender-100);border-radius:3px;overflow:hidden;margin-bottom:5px;}
+.deck-stat-fill{height:100%;background:linear-gradient(90deg,var(--wisteria),var(--lavender-300));border-radius:3px;transition:width 0.5s ease;}
+.deck-stat-num{font-size:0.72rem;color:var(--text-secondary);}
+@keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-6px);}40%{transform:translateX(6px);}60%{transform:translateX(-4px);}80%{transform:translateX(4px);}}
+.shake-wrong{animation:shake 0.5s ease;}
+</style>
+</head>
+<body>
+<div class="bg-blobs">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+</div>
+<div id="app">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-brand">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <circle cx="14" cy="14" r="13" fill="url(#hg-grad)"/>
+        <path d="M14 6 C14 6 10 10 10 13 C10 15.2 11.8 17 14 17 C16.2 17 18 15.2 18 13 C18 10 14 6 14 6Z" fill="white" opacity="0.9"/>
+        <path d="M9 13 C9 13 7 15 8 17.5 C8.8 19.5 11 20 14 20 C17 20 19.2 19.5 20 17.5 C21 15 19 13 19 13" stroke="white" stroke-width="1.5" fill="none" opacity="0.6"/>
+        <defs><linearGradient id="hg-grad" x1="0" y1="0" x2="28" y2="28"><stop stop-color="#a78bfa"/><stop offset="1" stop-color="#7c3aed"/></linearGradient></defs>
+      </svg>
+      <div>
+        <div class="brand-title">Hangul Garden</div>
+        <div class="brand-sub">Reading Fluency</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="garden-badge" id="gardenBadge">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="3" fill="#a78bfa"/><path d="M7 2v2M7 10v2M2 7h2M10 7h2M3.5 3.5l1.4 1.4M9.1 9.1l1.4 1.4M9.1 4.9l-1.4 1.4M4.9 9.1 3.5 10.5" stroke="#a78bfa" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <span id="gardenLabel">Seed</span>
+      </div>
+      <div class="due-badge hidden" id="dueBadge">0 due</div>
+      <button class="icon-btn" id="settingsBtn" title="Settings">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.4"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M2.9 2.9l1.4 1.4M11.7 11.7l1.4 1.4M11.7 4.3l-1.4 1.4M4.3 11.7l-1.4 1.4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" data-mode="quiz">Quiz</button>
+    <button class="tab" data-mode="drill">Reading Drill</button>
+    <button class="tab" data-mode="speed">Speed Round</button>
+    <button class="tab" data-mode="garden">Garden</button>
+  </div>
+  <!-- QUIZ MODE -->
+  <div class="section active" id="sec-quiz">
+    <div class="deck-selector" id="deckSelector"></div>
+    <div class="progress-row">
+      <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-label" id="progressLabel">0 / 0</div>
+    </div>
+    <div class="card-wrap">
+      <div class="question-card" id="questionCard">
+        <div class="card-deck-tag" id="cardDeckTag"></div>
+        <button class="card-audio-btn" id="audioBtn" title="Pronounce">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 5H5L8 2v10L5 9H2V5Z" fill="currentColor"/><path d="M10 4.5c1 0.8 1.5 1.5 1.5 2.5s-0.5 1.7-1.5 2.5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" fill="none"/></svg>
+        </button>
+        <div class="card-korean" id="cardKorean">—</div>
+        <div class="card-hint" id="cardHint"></div>
+      </div>
+    </div>
+    <div class="options-grid" id="optionsGrid"></div>
+    <div class="nav-row" id="navRow">
+      <button class="nav-btn" id="prevBtn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M9 2L4 7l5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Prev
+      </button>
+      <button class="nav-btn" id="nextUnansweredBtn">Next Unanswered</button>
+      <button class="nav-btn primary" id="nextBtn">
+        Next
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 2l5 5-5 5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button class="nav-btn" id="restartBtn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7A4 4 0 1 1 7 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M3 4v3H6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Restart
+      </button>
+    </div>
+    <div id="feedbackArea"></div>
+  </div>
+  <!-- READING DRILL MODE -->
+  <div class="section" id="sec-drill">
+    <div class="drill-controls">
+      <button class="reveal-btn" id="revealAllBtn">Reveal All</button>
+      <select class="difficulty-select" id="difficultySelect">
+        <option value="easy">Easy – Common Words</option>
+        <option value="medium" selected>Medium – Mixed</option>
+        <option value="hard">Hard – All Decks</option>
+      </select>
+      <button class="nav-btn" id="refreshDrillBtn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7A4 4 0 1 1 7 11" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><path d="M3 4v3H6" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Refresh
+      </button>
+    </div>
+    <div class="drill-grid" id="drillGrid"></div>
+  </div>
+  <!-- SPEED ROUND MODE -->
+  <div class="section" id="sec-speed">
+    <div id="speedStart" class="text-center" style="padding:40px 0;">
+      <svg width="60" height="60" viewBox="0 0 60 60" fill="none" style="margin:0 auto 16px;display:block;">
+        <circle cx="30" cy="30" r="29" stroke="var(--lavender-300)" stroke-width="2"/>
+        <path d="M20 30 L28 22 L28 38 Z" fill="var(--wisteria)" opacity="0.5"/>
+        <path d="M30 30 L38 22 L38 38 Z" fill="var(--wisteria)"/>
+      </svg>
+      <div style="font-size:1.2rem;font-weight:700;color:var(--text-primary);margin-bottom:8px;">Speed Round</div>
+      <div style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:24px;">20 cards · timed · no peeking</div>
+      <button class="nav-btn primary" id="startSpeedBtn" style="margin:0 auto;font-size:1rem;padding:12px 32px;">Start</button>
+    </div>
+    <div id="speedGame" class="hidden">
+      <div class="speed-header">
+        <div class="speed-counter" id="speedCounter">1 / 20</div>
+        <div class="speed-timer" id="speedTimer">0.0s</div>
+      </div>
+      <div class="speed-card" id="speedCard">
+        <div class="speed-korean" id="speedKorean">—</div>
+        <div class="speed-options" id="speedOptions"></div>
+      </div>
+    </div>
+    <div id="speedSummary" class="hidden speed-summary">
+      <h2>Round Complete</h2>
+      <div style="font-size:0.85rem;color:var(--text-secondary);">Here's how you did</div>
+      <div class="summary-stats" id="summaryStats"></div>
+      <button class="nav-btn primary" id="playAgainBtn" style="margin:0 auto;">Play Again</button>
+    </div>
+  </div>
+  <!-- GARDEN VIEW -->
+  <div class="section" id="sec-garden">
+    <div class="garden-panel">
+      <div class="garden-title">Your Hangul Garden</div>
+      <div class="garden-svg-wrap" id="gardenSvgWrap"></div>
+      <div style="margin-top:14px;font-size:0.78rem;color:var(--text-secondary);text-align:center;" id="gardenDesc"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;" id="deckStats"></div>
+  </div>
+</div>
+<!-- SETTINGS OVERLAY -->
+<div class="settings-overlay hidden" id="settingsOverlay">
+  <div class="settings-panel">
+    <h2>Settings</h2>
+    <div class="setting-row">
+      <div><div class="setting-label">Dark Mode</div><div class="setting-sub">Easy on the eyes at night</div></div>
+      <button class="toggle" id="toggleDark"></button>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label">Animations</div><div class="setting-sub">Bloom & entrance effects</div></div>
+      <button class="toggle on" id="toggleAnim"></button>
+    </div>
+    <div class="setting-row">
+      <div><div class="setting-label">Sound</div><div class="setting-sub">Korean pronunciation audio</div></div>
+      <button class="toggle on" id="toggleSound"></button>
+    </div>
+    <button class="danger-btn" id="resetProgressBtn">Reset All Progress</button>
+    <button class="close-btn" id="closeSettingsBtn">Close</button>
+  </div>
+</div>
+<script>
+/* ============================================================
+   5. DATA — All Cards
+   ============================================================ */
+const CARDS = [
+  /* ---- VOWELS ---- */
+  {id:'v1',deck:'vowels',korean:'ㅏ',answer:'a',options:['a','eo','o','eu'],explanation:'Pronounced like "a" in "father". One of the most common vowels.',breakdown:'ㅏ = a',examples:[{k:'아이',r:'ai',m:'child'},{k:'아버지',r:'abeoji',m:'father'}]},
+  {id:'v2',deck:'vowels',korean:'ㅑ',answer:'ya',options:['ya','yeo','yo','yu'],explanation:'Pronounced "ya" — like ㅏ but with a "y" glide before it.',breakdown:'ㅑ = ya',examples:[{k:'야구',r:'yagu',m:'baseball'},{k:'야채',r:'yachae',m:'vegetables'}]},
+  {id:'v3',deck:'vowels',korean:'ㅓ',answer:'eo',options:['eo','o','eu','a'],explanation:'Pronounced "eo" — similar to "uh" or the "u" in "but". Often confused with ㅗ.',breakdown:'ㅓ = eo',examples:[{k:'서울',r:'Seoul',m:'Seoul'},{k:'언어',r:'eoneo',m:'language'}]},
+  {id:'v4',deck:'vowels',korean:'ㅕ',answer:'yeo',options:['yeo','yo','ya','yu'],explanation:'Pronounced "yeo" — like ㅓ but with a "y" glide.',breakdown:'ㅕ = yeo',examples:[{k:'여름',r:'yeoreum',m:'summer'},{k:'여자',r:'yeoja',m:'woman'}]},
+  {id:'v5',deck:'vowels',korean:'ㅗ',answer:'o',options:['o','eo','u','yo'],explanation:'Pronounced "o" — like "o" in "go". Keep lips rounded.',breakdown:'ㅗ = o',examples:[{k:'오늘',r:'oneul',m:'today'},{k:'고기',r:'gogi',m:'meat'}]},
+  {id:'v6',deck:'vowels',korean:'ㅛ',answer:'yo',options:['yo','yeo','o','yu'],explanation:'Pronounced "yo" — like ㅗ but with a "y" glide.',breakdown:'ㅛ = yo',examples:[{k:'요리',r:'yori',m:'cooking'},{k:'교육',r:'gyoyuk',m:'education'}]},
+  {id:'v7',deck:'vowels',korean:'ㅜ',answer:'u',options:['u','o','eu','wu'],explanation:'Pronounced "u" — like "oo" in "food". Lips are rounded and pushed forward.',breakdown:'ㅜ = u',examples:[{k:'우유',r:'uyu',m:'milk'},{k:'구름',r:'gureum',m:'cloud'}]},
+  {id:'v8',deck:'vowels',korean:'ㅠ',answer:'yu',options:['yu','yo','u','yeo'],explanation:'Pronounced "yu" — like ㅜ but with a "y" glide.',breakdown:'ㅠ = yu',examples:[{k:'유리',r:'yuri',m:'glass'},{k:'유럽',r:'Yureop',m:'Europe'}]},
+  {id:'v9',deck:'vowels',korean:'ㅡ',answer:'eu',options:['eu','u','o','eo'],explanation:'Pronounced "eu" — a unique vowel with no English equivalent. Lips are flat and unrounded, tongue is pulled back.',breakdown:'ㅡ = eu',examples:[{k:'으로',r:'euro',m:'by/via'},{k:'음악',r:'eumak',m:'music'}]},
+  {id:'v10',deck:'vowels',korean:'ㅣ',answer:'i',options:['i','e','ei','ee'],explanation:'Pronounced "i" — like "ee" in "see". Lips spread wide.',breakdown:'ㅣ = i',examples:[{k:'이름',r:'ireum',m:'name'},{k:'기차',r:'gicha',m:'train'}]},
+  {id:'v11',deck:'vowels',korean:'ㅔ',answer:'e',options:['e','ae','eo','ei'],explanation:'Pronounced "e" — like "e" in "bed". Modern Korean speakers use ㅔ and ㅐ almost identically.',breakdown:'ㅔ = e',examples:[{k:'세상',r:'sesang',m:'world'},{k:'네',r:'ne',m:'yes'}]},
+  {id:'v12',deck:'vowels',korean:'ㅐ',answer:'ae',options:['ae','e','a','ai'],explanation:'Pronounced "ae" — historically like "a" in "cat", now nearly identical to ㅔ for most speakers.',breakdown:'ㅐ = ae',examples:[{k:'개',r:'gae',m:'dog'},{k:'배',r:'bae',m:'belly/ship/pear'}]},
+
+  /* ---- CONSONANTS ---- */
+  {id:'c1',deck:'consonants',korean:'ㄱ',answer:'g/k',options:['g/k','n','d/t','r/l'],explanation:'At the start of a syllable: "g". At the end (batchim): "k". Similar to English "g" or "k".',breakdown:'ㄱ = g (initial) / k (final)',examples:[{k:'가다',r:'gada',m:'to go'},{k:'학교',r:'hakgyo',m:'school'}]},
+  {id:'c2',deck:'consonants',korean:'ㄴ',answer:'n',options:['n','m','ng','l'],explanation:'Pronounced "n" — like English "n". Consistent in all positions.',breakdown:'ㄴ = n',examples:[{k:'나라',r:'nara',m:'country'},{k:'눈',r:'nun',m:'eye/snow'}]},
+  {id:'c3',deck:'consonants',korean:'ㄷ',answer:'d/t',options:['d/t','g/k','j','b/p'],explanation:'At the start: "d". At the end (batchim): "t". Similar to English "d" or "t".',breakdown:'ㄷ = d (initial) / t (final)',examples:[{k:'다리',r:'dari',m:'leg/bridge'},{k:'맏이',r:'maji',m:'eldest child'}]},
+  {id:'c4',deck:'consonants',korean:'ㄹ',answer:'r/l',options:['r/l','n','d','rr'],explanation:'Between vowels: a flap "r" (like "r" in Spanish). At the end: "l". At the start of a word: often silent or "n".',breakdown:'ㄹ = r (between vowels) / l (final)',examples:[{k:'라디오',r:'radio',m:'radio'},{k:'말',r:'mal',m:'horse/words'}]},
+  {id:'c5',deck:'consonants',korean:'ㅁ',answer:'m',options:['m','n','b/p','ng'],explanation:'Pronounced "m" — exactly like English "m".',breakdown:'ㅁ = m',examples:[{k:'마음',r:'maeum',m:'heart/mind'},{k:'음식',r:'eumsik',m:'food'}]},
+  {id:'c6',deck:'consonants',korean:'ㅂ',answer:'b/p',options:['b/p','m','d/t','g/k'],explanation:'At the start: "b". At the end (batchim): "p".',breakdown:'ㅂ = b (initial) / p (final)',examples:[{k:'바다',r:'bada',m:'sea'},{k:'밥',r:'bap',m:'rice/meal'}]},
+  {id:'c7',deck:'consonants',korean:'ㅅ',answer:'s/t',options:['s/t','j','sh','z'],explanation:'Usually "s". Before ㅣ or certain vowels: "sh". At the end (batchim): "t".',breakdown:'ㅅ = s (initial) / t (final)',examples:[{k:'사람',r:'saram',m:'person'},{k:'옷',r:'ot',m:'clothes'}]},
+  {id:'c8',deck:'consonants',korean:'ㅇ',answer:'silent/ng',options:['silent/ng','m','n','ng'],explanation:'At the start of a syllable: completely silent (placeholder). At the end (batchim): "ng" like in "song".',breakdown:'ㅇ = silent (initial) / ng (final)',examples:[{k:'아이',r:'ai',m:'child'},{k:'강',r:'gang',m:'river'}]},
+  {id:'c9',deck:'consonants',korean:'ㅈ',answer:'j',options:['j','ch','z','dj'],explanation:'Pronounced "j" — like English "j". Before ㅣ, sounds slightly like "ji".',breakdown:'ㅈ = j',examples:[{k:'자다',r:'jada',m:'to sleep'},{k:'지금',r:'jigeum',m:'now'}]},
+  {id:'c10',deck:'consonants',korean:'ㅊ',answer:'ch',options:['ch','j','sh','ts'],explanation:'Pronounced "ch" — like "ch" in "cheese". An aspirated version of ㅈ.',breakdown:'ㅊ = ch',examples:[{k:'차',r:'cha',m:'car/tea'},{k:'친구',r:'chingu',m:'friend'}]},
+  {id:'c11',deck:'consonants',korean:'ㅋ',answer:'k',options:['k','g','kk','h'],explanation:'Pronounced "k" — an aspirated "k", like "k" in "kite". Heavier than ㄱ.',breakdown:'ㅋ = k (aspirated)',examples:[{k:'코',r:'ko',m:'nose'},{k:'커피',r:'keopi',m:'coffee'}]},
+  {id:'c12',deck:'consonants',korean:'ㅌ',answer:'t',options:['t','d','tt','th'],explanation:'Pronounced "t" — an aspirated "t", like "t" in "top". Heavier than ㄷ.',breakdown:'ㅌ = t (aspirated)',examples:[{k:'타다',r:'tada',m:'to ride'},{k:'태양',r:'taeyang',m:'sun'}]},
+  {id:'c13',deck:'consonants',korean:'ㅍ',answer:'p',options:['p','b','pp','f'],explanation:'Pronounced "p" — an aspirated "p", like "p" in "pen". Heavier than ㅂ.',breakdown:'ㅍ = p (aspirated)',examples:[{k:'파란',r:'paran',m:'blue'},{k:'편지',r:'pyeonji',m:'letter'}]},
+  {id:'c14',deck:'consonants',korean:'ㅎ',answer:'h',options:['h','silent','ng','k'],explanation:'Pronounced "h" — like English "h". Can weaken or disappear between vowels.',breakdown:'ㅎ = h',examples:[{k:'하늘',r:'haneul',m:'sky'},{k:'학교',r:'hakgyo',m:'school'}]},
+
+  /* ---- COMBINED VOWELS ---- */
+  {id:'cv1',deck:'combined',korean:'ㅘ',answer:'wa',options:['wa','wo','wae','oe'],explanation:'ㅗ + ㅏ = wa. Lips start rounded (ㅗ) then open (ㅏ).',breakdown:'ㅗ + ㅏ = wa',examples:[{k:'와',r:'wa',m:'wow/come'},{k:'과자',r:'gwaja',m:'snack'}]},
+  {id:'cv2',deck:'combined',korean:'ㅙ',answer:'wae',options:['wae','wa','oe','we'],explanation:'ㅗ + ㅐ = wae. Similar to "weh". Rare in modern speech.',breakdown:'ㅗ + ㅐ = wae',examples:[{k:'왜',r:'wae',m:'why'},{k:'돼지',r:'dwaeji',m:'pig'}]},
+  {id:'cv3',deck:'combined',korean:'ㅚ',answer:'oe',options:['oe','we','wae','wi'],explanation:'ㅗ + ㅣ = oe. Pronounced like "we" in casual speech.',breakdown:'ㅗ + ㅣ = oe',examples:[{k:'최고',r:'choego',m:'best'},{k:'외국',r:'oeguk',m:'foreign country'}]},
+  {id:'cv4',deck:'combined',korean:'ㅝ',answer:'wo',options:['wo','wa','weo','eu'],explanation:'ㅜ + ㅓ = wo. Lips start rounded (ㅜ) then relax (ㅓ).',breakdown:'ㅜ + ㅓ = wo',examples:[{k:'뭐',r:'mwo',m:'what'},{k:'원',r:'won',m:'Korean won'}]},
+  {id:'cv5',deck:'combined',korean:'ㅞ',answer:'we',options:['we','wae','wi','oe'],explanation:'ㅜ + ㅔ = we. Very similar to "way" but shorter.',breakdown:'ㅜ + ㅔ = we',examples:[{k:'웨이터',r:'weiteo',m:'waiter'},{k:'궤도',r:'gwedo',m:'orbit'}]},
+  {id:'cv6',deck:'combined',korean:'ㅟ',answer:'wi',options:['wi','we','ui','i'],explanation:'ㅜ + ㅣ = wi. Like "we" in "week".',breakdown:'ㅜ + ㅣ = wi',examples:[{k:'위험',r:'wiheom',m:'danger'},{k:'귀',r:'gwi',m:'ear'}]},
+  {id:'cv7',deck:'combined',korean:'ㅢ',answer:'ui',options:['ui','eu','i','wi'],explanation:'ㅡ + ㅣ = ui. Difficult vowel — starts with ㅡ then glides to ㅣ. Often sounds like "i" or "e" in fast speech.',breakdown:'ㅡ + ㅣ = ui',examples:[{k:'의사',r:'uisa',m:'doctor'},{k:'우리',r:'uri',m:'we/our'}]},
+
+  /* ---- DOUBLE CONSONANTS ---- */
+  {id:'dc1',deck:'double',korean:'ㄲ',answer:'kk',options:['kk','k','g','gg'],explanation:'A tensed/doubled ㄱ. Pronounced with a sharp, glottal "kk" — no aspiration, strong tension.',breakdown:'ㄲ = kk (tense k)',examples:[{k:'꽃',r:'kkot',m:'flower'},{k:'꿈',r:'kkum',m:'dream'}]},
+  {id:'dc2',deck:'double',korean:'ㄸ',answer:'tt',options:['tt','t','d','th'],explanation:'A tensed/doubled ㄷ. Pronounced with sharp tension, like a forceful "tt".',breakdown:'ㄸ = tt (tense t)',examples:[{k:'딸',r:'ttal',m:'daughter'},{k:'따뜻하다',r:'ttatteutada',m:'warm'}]},
+  {id:'dc3',deck:'double',korean:'ㅃ',answer:'pp',options:['pp','p','b','bb'],explanation:'A tensed/doubled ㅂ. Pronounced with sharp tension like "pp".',breakdown:'ㅃ = pp (tense p)',examples:[{k:'ppalli',r:'ppalli',m:'quickly'},{k:'뻔하다',r:'ppeonhada',m:'obvious'}]},
+  {id:'dc4',deck:'double',korean:'ㅆ',answer:'ss',options:['ss','s','z','sh'],explanation:'A tensed/doubled ㅅ. Sounds like a sharp, tense "ss".',breakdown:'ㅆ = ss (tense s)',examples:[{k:'씨',r:'ssi',m:'Mr./Ms./seed'},{k:'있다',r:'itda',m:'to exist/have'}]},
+  {id:'dc5',deck:'double',korean:'ㅉ',answer:'jj',options:['jj','j','ch','ts'],explanation:'A tensed/doubled ㅈ. Pronounced with sharp tension like "jj".',breakdown:'ㅉ = jj (tense j)',examples:[{k:'짜다',r:'jjada',m:'salty'},{k:'쪽',r:'jjok',m:'direction/side'}]},
+
+  /* ---- BATCHIM ---- */
+  {id:'b1',deck:'batchim',korean:'강',answer:'gang (ng ending)',options:['gang (ng ending)','gam (m ending)','gan (n ending)','gak (k ending)'],explanation:'강 = ㄱ+ㅏ+ㅇ. The final ㅇ creates an "ng" sound like in "song".',breakdown:'ㄱ=g, ㅏ=a, ㅇ(final)=ng → gang',examples:[{k:'강물',r:'gangmul',m:'river water'},{k:'강아지',r:'gangaji',m:'puppy'}]},
+  {id:'b2',deck:'batchim',korean:'산',answer:'san (n ending)',options:['san (n ending)','sal (l ending)','sam (m ending)','sak (k ending)'],explanation:'산 = ㅅ+ㅏ+ㄴ. Final ㄴ gives a clean "n" ending.',breakdown:'ㅅ=s, ㅏ=a, ㄴ(final)=n → san',examples:[{k:'산이',r:'sani',m:'mountain (subject)'},{k:'높은 산',r:'nopeun san',m:'high mountain'}]},
+  {id:'b3',deck:'batchim',korean:'밥',answer:'bap (p ending)',options:['bap (p ending)','bam (m ending)','ban (n ending)','bat (t ending)'],explanation:'밥 = ㅂ+ㅏ+ㅂ. Final ㅂ gives a stopped "p" sound — lips close but no air release.',breakdown:'ㅂ=b, ㅏ=a, ㅂ(final)=p → bap',examples:[{k:'밥을',r:'babeul',m:'rice (object)'},{k:'밥솥',r:'bapsot',m:'rice cooker'}]},
+  {id:'b4',deck:'batchim',korean:'국',answer:'guk (k ending)',options:['guk (k ending)','gun (n ending)','gung (ng ending)','gut (t ending)'],explanation:'국 = ㄱ+ㅜ+ㄱ. Final ㄱ gives a stopped "k" sound.',breakdown:'ㄱ=g, ㅜ=u, ㄱ(final)=k → guk',examples:[{k:'국물',r:'gungmul',m:'broth'},{k:'미국',r:'miguk',m:'USA'}]},
+  {id:'b5',deck:'batchim',korean:'달',answer:'dal (l ending)',options:['dal (l ending)','dan (n ending)','dam (m ending)','dat (t ending)'],explanation:'달 = ㄷ+ㅏ+ㄹ. Final ㄹ gives a clear "l" sound.',breakdown:'ㄷ=d, ㅏ=a, ㄹ(final)=l → dal',examples:[{k:'달빛',r:'dalbit',m:'moonlight'},{k:'달력',r:'dallyeok',m:'calendar'}]},
+  {id:'b6',deck:'batchim',korean:'봄',answer:'bom (m ending)',options:['bom (m ending)','bon (n ending)','bong (ng ending)','bok (k ending)'],explanation:'봄 = ㅂ+ㅗ+ㅁ. Final ㅁ gives a nasal "m" ending.',breakdown:'ㅂ=b, ㅗ=o, ㅁ(final)=m → bom',examples:[{k:'봄날',r:'bomnal',m:'spring day'},{k:'봄비',r:'bombi',m:'spring rain'}]},
+  {id:'b7',deck:'batchim',korean:'옷',answer:'ot (t ending)',options:['ot (t ending)','os (s ending)','ok (k ending)','on (n ending)'],explanation:'옷 = ㅇ+ㅗ+ㅅ. Final ㅅ gives a stopped "t" sound (not released).',breakdown:'ㅇ=silent, ㅗ=o, ㅅ(final)=t → ot',examples:[{k:'옷걸이',r:'otgeori',m:'clothes hanger'},{k:'한복',r:'hanbok',m:'Korean clothing'}]},
+  /* ---- SYLLABLES (80+) ---- */
+  {id:'s1',deck:'syllables',korean:'가',answer:'ga',options:['ga','ka','na','da'],explanation:'ㄱ+ㅏ = ga. Very common syllable.',breakdown:'ㄱ=g, ㅏ=a',examples:[{k:'가다',r:'gada',m:'to go'},{k:'가게',r:'gage',m:'shop'}]},
+  {id:'s2',deck:'syllables',korean:'나',answer:'na',options:['na','ma','la','ra'],explanation:'ㄴ+ㅏ = na. Means "I" informally.',breakdown:'ㄴ=n, ㅏ=a',examples:[{k:'나라',r:'nara',m:'country'},{k:'나무',r:'namu',m:'tree'}]},
+  {id:'s3',deck:'syllables',korean:'다',answer:'da',options:['da','ta','na','ra'],explanation:'ㄷ+ㅏ = da. Common verb ending.',breakdown:'ㄷ=d, ㅏ=a',examples:[{k:'다시',r:'dasi',m:'again'},{k:'다음',r:'daeum',m:'next'}]},
+  {id:'s4',deck:'syllables',korean:'마',answer:'ma',options:['ma','ba','na','pa'],explanation:'ㅁ+ㅏ = ma.',breakdown:'ㅁ=m, ㅏ=a',examples:[{k:'마음',r:'maeum',m:'heart'},{k:'마지막',r:'majimak',m:'last/final'}]},
+  {id:'s5',deck:'syllables',korean:'바',answer:'ba',options:['ba','pa','ma','va'],explanation:'ㅂ+ㅏ = ba.',breakdown:'ㅂ=b, ㅏ=a',examples:[{k:'바다',r:'bada',m:'sea'},{k:'바람',r:'baram',m:'wind'}]},
+  {id:'s6',deck:'syllables',korean:'사',answer:'sa',options:['sa','sha','ja','za'],explanation:'ㅅ+ㅏ = sa.',breakdown:'ㅅ=s, ㅏ=a',examples:[{k:'사람',r:'saram',m:'person'},{k:'사랑',r:'sarang',m:'love'}]},
+  {id:'s7',deck:'syllables',korean:'아',answer:'a',options:['a','ya','o','eo'],explanation:'ㅇ+ㅏ = a. The silent ㅇ just carries the vowel.',breakdown:'ㅇ=silent, ㅏ=a',examples:[{k:'아이',r:'ai',m:'child'},{k:'아침',r:'achim',m:'morning'}]},
+  {id:'s8',deck:'syllables',korean:'자',answer:'ja',options:['ja','cha','za','jja'],explanation:'ㅈ+ㅏ = ja.',breakdown:'ㅈ=j, ㅏ=a',examples:[{k:'자다',r:'jada',m:'to sleep'},{k:'자유',r:'jayu',m:'freedom'}]},
+  {id:'s9',deck:'syllables',korean:'차',answer:'cha',options:['cha','ja','sha','ka'],explanation:'ㅊ+ㅏ = cha. Aspirated.',breakdown:'ㅊ=ch, ㅏ=a',examples:[{k:'차다',r:'chada',m:'to kick/cold'},{k:'차이',r:'chai',m:'difference'}]},
+  {id:'s10',deck:'syllables',korean:'카',answer:'ka',options:['ka','ga','ha','kka'],explanation:'ㅋ+ㅏ = ka. Aspirated k.',breakdown:'ㅋ=k, ㅏ=a',examples:[{k:'카드',r:'kadeu',m:'card'},{k:'카메라',r:'kamera',m:'camera'}]},
+  {id:'s11',deck:'syllables',korean:'타',answer:'ta',options:['ta','da','tha','tta'],explanation:'ㅌ+ㅏ = ta. Aspirated t.',breakdown:'ㅌ=t, ㅏ=a',examples:[{k:'타다',r:'tada',m:'to ride'},{k:'타자',r:'taja',m:'typist'}]},
+  {id:'s12',deck:'syllables',korean:'파',answer:'pa',options:['pa','ba','fa','ppa'],explanation:'ㅍ+ㅏ = pa. Aspirated p.',breakdown:'ㅍ=p, ㅏ=a',examples:[{k:'파란',r:'paran',m:'blue'},{k:'파도',r:'pado',m:'wave'}]},
+  {id:'s13',deck:'syllables',korean:'하',answer:'ha',options:['ha','a','ya','kha'],explanation:'ㅎ+ㅏ = ha.',breakdown:'ㅎ=h, ㅏ=a',examples:[{k:'하늘',r:'haneul',m:'sky'},{k:'하루',r:'haru',m:'one day'}]},
+  {id:'s14',deck:'syllables',korean:'기',answer:'gi',options:['gi','ki','ji','ni'],explanation:'ㄱ+ㅣ = gi.',breakdown:'ㄱ=g, ㅣ=i',examples:[{k:'기차',r:'gicha',m:'train'},{k:'기억',r:'gieok',m:'memory'}]},
+  {id:'s15',deck:'syllables',korean:'니',answer:'ni',options:['ni','mi','ri','di'],explanation:'ㄴ+ㅣ = ni.',breakdown:'ㄴ=n, ㅣ=i',examples:[{k:'니가',r:'niga',m:'you (informal)'},{k:'아니',r:'ani',m:'no'}]},
+  {id:'s16',deck:'syllables',korean:'미',answer:'mi',options:['mi','ni','bi','pi'],explanation:'ㅁ+ㅣ = mi.',breakdown:'ㅁ=m, ㅣ=i',examples:[{k:'미래',r:'mirae',m:'future'},{k:'미국',r:'miguk',m:'USA'}]},
+  {id:'s17',deck:'syllables',korean:'비',answer:'bi',options:['bi','pi','mi','vi'],explanation:'ㅂ+ㅣ = bi.',breakdown:'ㅂ=b, ㅣ=i',examples:[{k:'비',r:'bi',m:'rain'},{k:'비행기',r:'bihaenggi',m:'airplane'}]},
+  {id:'s18',deck:'syllables',korean:'시',answer:'shi',options:['shi','si','ji','chi'],explanation:'ㅅ+ㅣ = shi. ㅅ softens to "sh" before ㅣ.',breakdown:'ㅅ=sh (before ㅣ), ㅣ=i',examples:[{k:'시간',r:'sigan',m:'time'},{k:'시작',r:'sijak',m:'beginning'}]},
+  {id:'s19',deck:'syllables',korean:'이',answer:'i',options:['i','e','ei','yi'],explanation:'ㅇ+ㅣ = i. Silent ㅇ carries ㅣ.',breakdown:'ㅇ=silent, ㅣ=i',examples:[{k:'이름',r:'ireum',m:'name'},{k:'이상',r:'isang',m:'strange/ideal'}]},
+  {id:'s20',deck:'syllables',korean:'지',answer:'ji',options:['ji','chi','zi','gi'],explanation:'ㅈ+ㅣ = ji.',breakdown:'ㅈ=j, ㅣ=i',examples:[{k:'지금',r:'jigeum',m:'now'},{k:'지도',r:'jido',m:'map'}]},
+  {id:'s21',deck:'syllables',korean:'히',answer:'hi',options:['hi','ki','chi','shi'],explanation:'ㅎ+ㅣ = hi.',breakdown:'ㅎ=h, ㅣ=i',examples:[{k:'히',r:'hi',m:'(emphasis particle)'},{k:'여기',r:'yeogi',m:'here'}]},
+  {id:'s22',deck:'syllables',korean:'고',answer:'go',options:['go','ko','no','do'],explanation:'ㄱ+ㅗ = go.',breakdown:'ㄱ=g, ㅗ=o',examples:[{k:'고기',r:'gogi',m:'meat'},{k:'고마워',r:'gomawo',m:'thank you'}]},
+  {id:'s23',deck:'syllables',korean:'노',answer:'no',options:['no','mo','ro','lo'],explanation:'ㄴ+ㅗ = no.',breakdown:'ㄴ=n, ㅗ=o',examples:[{k:'노래',r:'norae',m:'song'},{k:'노력',r:'noryeok',m:'effort'}]},
+  {id:'s24',deck:'syllables',korean:'도',answer:'do',options:['do','to','ro','no'],explanation:'ㄷ+ㅗ = do.',breakdown:'ㄷ=d, ㅗ=o',examples:[{k:'도시',r:'dosi',m:'city'},{k:'도움',r:'doum',m:'help'}]},
+  {id:'s25',deck:'syllables',korean:'모',answer:'mo',options:['mo','bo','no','po'],explanation:'ㅁ+ㅗ = mo.',breakdown:'ㅁ=m, ㅗ=o',examples:[{k:'모두',r:'modu',m:'everyone'},{k:'모양',r:'moyang',m:'shape'}]},
+  {id:'s26',deck:'syllables',korean:'보',answer:'bo',options:['bo','po','mo','vo'],explanation:'ㅂ+ㅗ = bo.',breakdown:'ㅂ=b, ㅗ=o',examples:[{k:'boda',r:'boda',m:'to see'},{k:'보통',r:'botong',m:'usually'}]},
+  {id:'s27',deck:'syllables',korean:'소',answer:'so',options:['so','sho','jo','zo'],explanation:'ㅅ+ㅗ = so.',breakdown:'ㅅ=s, ㅗ=o',examples:[{k:'소리',r:'sori',m:'sound'},{k:'소문',r:'somun',m:'rumor'}]},
+  {id:'s28',deck:'syllables',korean:'오',answer:'o',options:['o','yo','eo','wo'],explanation:'ㅇ+ㅗ = o.',breakdown:'ㅇ=silent, ㅗ=o',examples:[{k:'오늘',r:'oneul',m:'today'},{k:'오후',r:'ohu',m:'afternoon'}]},
+  {id:'s29',deck:'syllables',korean:'조',answer:'jo',options:['jo','cho','zo','go'],explanation:'ㅈ+ㅗ = jo.',breakdown:'ㅈ=j, ㅗ=o',examples:[{k:'jogeum',r:'jogeum',m:'a little'},{k:'조심',r:'josim',m:'caution'}]},
+  {id:'s30',deck:'syllables',korean:'초',answer:'cho',options:['cho','jo','sho','tcho'],explanation:'ㅊ+ㅗ = cho.',breakdown:'ㅊ=ch, ㅗ=o',examples:[{k:'초록',r:'chorok',m:'green'},{k:'초콜릿',r:'chokollit',m:'chocolate'}]},
+  {id:'s31',deck:'syllables',korean:'구',answer:'gu',options:['gu','ku','nu','du'],explanation:'ㄱ+ㅜ = gu.',breakdown:'ㄱ=g, ㅜ=u',examples:[{k:'구름',r:'gureum',m:'cloud'},{k:'구경',r:'gugyeong',m:'sightseeing'}]},
+  {id:'s32',deck:'syllables',korean:'부',answer:'bu',options:['bu','pu','mu','vu'],explanation:'ㅂ+ㅜ = bu.',breakdown:'ㅂ=b, ㅜ=u',examples:[{k:'부모',r:'bumo',m:'parents'},{k:'부드러운',r:'budeureoum',m:'soft'}]},
+  {id:'s33',deck:'syllables',korean:'수',answer:'su',options:['su','shu','ju','zu'],explanation:'ㅅ+ㅜ = su.',breakdown:'ㅅ=s, ㅜ=u',examples:[{k:'수업',r:'sueop',m:'class'},{k:'수도',r:'sudo',m:'capital city'}]},
+  {id:'s34',deck:'syllables',korean:'우',answer:'u',options:['u','o','yu','wu'],explanation:'ㅇ+ㅜ = u.',breakdown:'ㅇ=silent, ㅜ=u',examples:[{k:'우리',r:'uri',m:'we/our'},{k:'우체국',r:'ucheguk',m:'post office'}]},
+  {id:'s35',deck:'syllables',korean:'주',answer:'ju',options:['ju','chu','zu','gu'],explanation:'ㅈ+ㅜ = ju.',breakdown:'ㅈ=j, ㅜ=u',examples:[{k:'주스',r:'juseu',m:'juice'},{k:'주말',r:'jumal',m:'weekend'}]},
+  {id:'s36',deck:'syllables',korean:'크',answer:'keu',options:['keu','ku','ke','ko'],explanation:'ㅋ+ㅡ = keu.',breakdown:'ㅋ=k, ㅡ=eu',examples:[{k:'크다',r:'keuda',m:'to be big'},{k:'크게',r:'keuge',m:'largely'}]},
+  {id:'s37',deck:'syllables',korean:'느',answer:'neu',options:['neu','nu','nee','no'],explanation:'ㄴ+ㅡ = neu.',breakdown:'ㄴ=n, ㅡ=eu',examples:[{k:'느리다',r:'neurida',m:'slow'},{k:'느낌',r:'neukkkim',m:'feeling'}]},
+  {id:'s38',deck:'syllables',korean:'으',answer:'eu',options:['eu','u','o','i'],explanation:'ㅇ+ㅡ = eu. One of Korean\'s most distinctive vowels.',breakdown:'ㅇ=silent, ㅡ=eu',examples:[{k:'으로',r:'euro',m:'by/toward'},{k:'으음',r:'eueum',m:'hmm'}]},
+  {id:'s39',deck:'syllables',korean:'여',answer:'yeo',options:['yeo','yo','ya','yi'],explanation:'ㅇ+ㅕ = yeo.',breakdown:'ㅇ=silent, ㅕ=yeo',examples:[{k:'여자',r:'yeoja',m:'woman'},{k:'여기',r:'yeogi',m:'here'}]},
+  {id:'s40',deck:'syllables',korean:'겨',answer:'gyeo',options:['gyeo','gyo','geo','gye'],explanation:'ㄱ+ㅕ = gyeo.',breakdown:'ㄱ=g, ㅕ=yeo',examples:[{k:'겨울',r:'gyeoul',m:'winter'},{k:'겨우',r:'gyeou',m:'barely'}]},
+  {id:'s41',deck:'syllables',korean:'며',answer:'myeo',options:['myeo','myo','meo','mye'],explanation:'ㅁ+ㅕ = myeo.',breakdown:'ㅁ=m, ㅕ=yeo',examples:[{k:'며칠',r:'myeochil',m:'how many days'},{k:'며느리',r:'myeoneuri',m:'daughter-in-law'}]},
+  {id:'s42',deck:'syllables',korean:'서',answer:'seo',options:['seo','so','swo','seu'],explanation:'ㅅ+ㅓ = seo.',breakdown:'ㅅ=s, ㅓ=eo',examples:[{k:'서울',r:'Seoul',m:'Seoul'},{k:'서로',r:'seoro',m:'each other'}]},
+  {id:'s43',deck:'syllables',korean:'어',answer:'eo',options:['eo','o','a','eu'],explanation:'ㅇ+ㅓ = eo.',breakdown:'ㅇ=silent, ㅓ=eo',examples:[{k:'어머니',r:'eomeoni',m:'mother'},{k:'어디',r:'eodi',m:'where'}]},
+  {id:'s44',deck:'syllables',korean:'거',answer:'geo',options:['geo','go','gwo','geu'],explanation:'ㄱ+ㅓ = geo.',breakdown:'ㄱ=g, ㅓ=eo',examples:[{k:'거기',r:'geogi',m:'there'},{k:'거의',r:'geoui',m:'almost'}]},
+  {id:'s45',deck:'syllables',korean:'버',answer:'beo',options:['beo','bo','bwo','beu'],explanation:'ㅂ+ㅓ = beo.',breakdown:'ㅂ=b, ㅓ=eo',examples:[{k:'버스',r:'beoseu',m:'bus'},{k:'버리다',r:'beorida',m:'to throw away'}]},
+  {id:'s46',deck:'syllables',korean:'너',answer:'neo',options:['neo','no','nwo','neu'],explanation:'ㄴ+ㅓ = neo. Means "you" informally.',breakdown:'ㄴ=n, ㅓ=eo',examples:[{k:'너',r:'neo',m:'you (informal)'},{k:'너무',r:'neomu',m:'too much'}]},
+  {id:'s47',deck:'syllables',korean:'게',answer:'ge',options:['ge','gye','ke','je'],explanation:'ㄱ+ㅔ = ge.',breakdown:'ㄱ=g, ㅔ=e',examples:[{k:'게임',r:'geim',m:'game'},{k:'게',r:'ge',m:'crab'}]},
+  {id:'s48',deck:'syllables',korean:'네',answer:'ne',options:['ne','me','le','de'],explanation:'ㄴ+ㅔ = ne. Also means "yes" in formal speech.',breakdown:'ㄴ=n, ㅔ=e',examples:[{k:'네',r:'ne',m:'yes'},{k:'네가',r:'nega',m:'you (subject)'}]},
+  {id:'s49',deck:'syllables',korean:'세',answer:'se',options:['se','she','je','ze'],explanation:'ㅅ+ㅔ = se.',breakdown:'ㅅ=s, ㅔ=e',examples:[{k:'세상',r:'sesang',m:'world'},{k:'세월',r:'sewol',m:'time/years'}]},
+  {id:'s50',deck:'syllables',korean:'에',answer:'e',options:['e','ae','ye','ei'],explanation:'ㅇ+ㅔ = e. Common location particle.',breakdown:'ㅇ=silent, ㅔ=e',examples:[{k:'에',r:'e',m:'at/in/to'},{k:'에서',r:'eseo',m:'from/at'}]},
+  {id:'s51',deck:'syllables',korean:'개',answer:'gae',options:['gae','ge','gai','kai'],explanation:'ㄱ+ㅐ = gae.',breakdown:'ㄱ=g, ㅐ=ae',examples:[{k:'개',r:'gae',m:'dog'},{k:'개인',r:'gaein',m:'individual'}]},
+  {id:'s52',deck:'syllables',korean:'배',answer:'bae',options:['bae','be','bai','bwei'],explanation:'ㅂ+ㅐ = bae.',breakdown:'ㅂ=b, ㅐ=ae',examples:[{k:'배',r:'bae',m:'belly/pear/ship'},{k:'배우다',r:'bauda',m:'to learn'}]},
+  {id:'s53',deck:'syllables',korean:'왜',answer:'wae',options:['wae','we','wa','wi'],explanation:'ㅇ+ㅘ+ㅔ → combined = wae.',breakdown:'ㅗ+ㅐ=wae',examples:[{k:'왜',r:'wae',m:'why'},{k:'왜냐하면',r:'waenyahamyeon',m:'because'}]},
+  {id:'s54',deck:'syllables',korean:'와',answer:'wa',options:['wa','wo','wae','ya'],explanation:'ㅇ+ㅘ = wa.',breakdown:'ㅗ+ㅏ=wa',examples:[{k:'와',r:'wa',m:'wow!/come'},{k:'와인',r:'wain',m:'wine'}]},
+  {id:'s55',deck:'syllables',korean:'뭐',answer:'mwo',options:['mwo','meo','muo','mo'],explanation:'ㅁ+ㅝ = mwo. Very common question word.',breakdown:'ㅁ=m, ㅜ+ㅓ=wo',examples:[{k:'뭐',r:'mwo',m:'what'},{k:'뭐야',r:'mwoya',m:'what is it?'}]},
+  {id:'s56',deck:'syllables',korean:'뉴',answer:'nyu',options:['nyu','nu','nyo','neo'],explanation:'ㄴ+ㅠ = nyu.',breakdown:'ㄴ=n, ㅠ=yu',examples:[{k:'뉴스',r:'nyuseu',m:'news'},{k:'뉴욕',r:'nyuyok',m:'New York'}]},
+  {id:'s57',deck:'syllables',korean:'류',answer:'ryu',options:['ryu','ru','ryu','lyu'],explanation:'ㄹ+ㅠ = ryu.',breakdown:'ㄹ=r/l, ㅠ=yu',examples:[{k:'유류',r:'yuryu',m:'oil/fuel'},{k:'교류',r:'gyoryu',m:'exchange/flow'}]},
+  {id:'s58',deck:'syllables',korean:'쥐',answer:'jwi',options:['jwi','ji','jui','wi'],explanation:'ㅈ+ㅟ = jwi.',breakdown:'ㅈ=j, ㅜ+ㅣ=wi',examples:[{k:'쥐',r:'jwi',m:'mouse/rat'},{k:'쥐다',r:'jwida',m:'to grip'}]},
+  {id:'s59',deck:'syllables',korean:'귀',answer:'gwi',options:['gwi','gi','gui','wi'],explanation:'ㄱ+ㅟ = gwi.',breakdown:'ㄱ=g, ㅜ+ㅣ=wi',examples:[{k:'귀',r:'gwi',m:'ear'},{k:'gwiyeopda',r:'gwiyeopda',m:'cute'}]},
+  {id:'s60',deck:'syllables',korean:'의',answer:'ui',options:['ui','i','e','wi'],explanation:'ㅇ+ㅢ = ui. As a possessive particle, sounds more like "e".',breakdown:'ㅡ+ㅣ=ui',examples:[{k:'의사',r:'uisa',m:'doctor'},{k:'나의',r:'naui',m:'my'}]},
+  {id:'s61',deck:'syllables',korean:'한',answer:'han',options:['han','ham','hak','hang'],explanation:'ㅎ+ㅏ+ㄴ = han. Batchim ㄴ gives the "n" ending.',breakdown:'ㅎ=h, ㅏ=a, ㄴ(final)=n',examples:[{k:'한국',r:'hanguk',m:'Korea'},{k:'한글',r:'hangeul',m:'Hangul'}]},
+  {id:'s62',deck:'syllables',korean:'들',answer:'deul',options:['deul','del','dol','deun'],explanation:'ㄷ+ㅡ+ㄹ = deul. Plural marker in Korean.',breakdown:'ㄷ=d, ㅡ=eu, ㄹ(final)=l',examples:[{k:'들',r:'deul',m:'plural marker'},{k:'아이들',r:'aideul',m:'children'}]},
+  {id:'s63',deck:'syllables',korean:'를',answer:'reul',options:['reul','rel','rul','neul'],explanation:'ㄹ+ㅡ+ㄹ = reul. Object particle after vowels.',breakdown:'ㄹ=r, ㅡ=eu, ㄹ(final)=l',examples:[{k:'를',r:'reul',m:'object particle'},{k:'나를',r:'nareul',m:'me (object)'}]},
+  {id:'s64',deck:'syllables',korean:'이',answer:'i',options:['i','yi','e','ui'],explanation:'ㅇ+ㅣ = i. Can mean "this" or be a subject particle.',breakdown:'ㅇ=silent, ㅣ=i',examples:[{k:'이것',r:'igeot',m:'this thing'},{k:'선생님이',r:'seonsaengnimi',m:'teacher (subject)'}]},
+  {id:'s65',deck:'syllables',korean:'은',answer:'eun',options:['eun','un','on','in'],explanation:'ㅇ+ㅡ+ㄴ = eun. Topic particle after consonants.',breakdown:'ㅇ=silent, ㅡ=eu, ㄴ(final)=n',examples:[{k:'은',r:'eun',m:'topic particle'},{k:'나는',r:'naneun',m:'I (topic)'}]},
+  {id:'s66',deck:'syllables',korean:'에',answer:'e',options:['e','ae','ye','we'],explanation:'ㅇ+ㅔ = e. Location and direction particle.',breakdown:'ㅇ=silent, ㅔ=e',examples:[{k:'학교에',r:'hakgyoe',m:'to school'},{k:'집에',r:'jibe',m:'at home'}]},
+  {id:'s67',deck:'syllables',korean:'랑',answer:'rang',options:['rang','ram','ran','lak'],explanation:'ㄹ+ㅏ+ㅇ = rang. Used in "and" (informal).',breakdown:'ㄹ=r, ㅏ=a, ㅇ(final)=ng',examples:[{k:'나랑',r:'narang',m:'with me'},{k:'친구랑',r:'chingurang',m:'with a friend'}]},
+  {id:'s68',deck:'syllables',korean:'면',answer:'myeon',options:['myeon','myon','meon','myen'],explanation:'ㅁ+ㅕ+ㄴ = myeon. Conditional ending "if".',breakdown:'ㅁ=m, ㅕ=yeo, ㄴ(final)=n',examples:[{k:'먹으면',r:'meogeumyeon',m:'if you eat'},{k:'하면',r:'hamyeon',m:'if you do'}]},
+  {id:'s69',deck:'syllables',korean:'겠',answer:'get',options:['get','get','ges','gek'],explanation:'ㄱ+ㅔ+ㅅ = get. Future/intent grammatical marker.',breakdown:'ㄱ=g, ㅔ=e, ㅅ(final)=t',examples:[{k:'하겠다',r:'haget-da',m:'I will do it'},{k:'알겠다',r:'algetta',m:'I understand'}]},
+  {id:'s70',deck:'syllables',korean:'습',answer:'seup',options:['seup','sup','seub','seung'],explanation:'ㅅ+ㅡ+ㅂ = seup. Found in formal endings.',breakdown:'ㅅ=s, ㅡ=eu, ㅂ(final)=p',examples:[{k:'합니다',r:'hamnida',m:'(formal verb ending)'},{k:'습니다',r:'seumnida',m:'(formal ending)'}]},
+  {id:'s71',deck:'syllables',korean:'않',answer:'an',options:['an','am','ak','ang'],explanation:'ㅇ+ㅏ+ㄶ = an. Used in negation 않다.',breakdown:'ㅇ=silent, ㅏ=a, ㄶ(final)=n',examples:[{k:'하지 않다',r:'haji anta',m:'do not do'},{k:'먹지 않다',r:'meokji anta',m:'do not eat'}]},
+  {id:'s72',deck:'syllables',korean:'없',answer:'eop',options:['eop','eobs','eos','eon'],explanation:'ㅇ+ㅓ+ㅂ = eop. From 없다 (to not have/exist).',breakdown:'ㅇ=silent, ㅓ=eo, ㅂ(final)=p',examples:[{k:'없다',r:'eopda',m:'to not exist/have'},{k:'없어',r:'eopseo',m:'there isn\'t'}]},
+  {id:'s73',deck:'syllables',korean:'있',answer:'it',options:['it','is','ik','ip'],explanation:'ㅇ+ㅣ+ㅅ = it. From 있다 (to have/exist).',breakdown:'ㅇ=silent, ㅣ=i, ㅅ(final)=t',examples:[{k:'있다',r:'itda',m:'to exist/have'},{k:'있어',r:'isseo',m:'there is'}]},
+  {id:'s74',deck:'syllables',korean:'먹',answer:'meok',options:['meok','mok','meog','meok'],explanation:'ㅁ+ㅓ+ㄱ = meok. From 먹다 (to eat).',breakdown:'ㅁ=m, ㅓ=eo, ㄱ(final)=k',examples:[{k:'먹다',r:'meokda',m:'to eat'},{k:'먹어',r:'meogeo',m:'eat it'}]},
+  {id:'s75',deck:'syllables',korean:'날',answer:'nal',options:['nal','nan','nam','nat'],explanation:'ㄴ+ㅏ+ㄹ = nal. Means "day" or "fly".',breakdown:'ㄴ=n, ㅏ=a, ㄹ(final)=l',examples:[{k:'오늘',r:'oneul',m:'today'},{k:'날씨',r:'nalsssi',m:'weather'}]},
+  {id:'s76',deck:'syllables',korean:'말',answer:'mal',options:['mal','man','mam','mat'],explanation:'ㅁ+ㅏ+ㄹ = mal. Means "words" or "horse".',breakdown:'ㅁ=m, ㅏ=a, ㄹ(final)=l',examples:[{k:'malhada',r:'malhada',m:'to speak'},{k:'한국말',r:'hangungmal',m:'Korean language'}]},
+  {id:'s77',deck:'syllables',korean:'일',answer:'il',options:['il','in','im','ik'],explanation:'ㅇ+ㅣ+ㄹ = il. Means "work" or "one" (number 1 in Sino-Korean).',breakdown:'ㅇ=silent, ㅣ=i, ㄹ(final)=l',examples:[{k:'일하다',r:'ilhada',m:'to work'},{k:'일본',r:'ilbon',m:'Japan'}]},
+  {id:'s78',deck:'syllables',korean:'물',answer:'mul',options:['mul','mun','mum','muk'],explanation:'ㅁ+ㅜ+ㄹ = mul. Means "water".',breakdown:'ㅁ=m, ㅜ=u, ㄹ(final)=l',examples:[{k:'물',r:'mul',m:'water'},{k:'물론',r:'mullon',m:'of course'}]},
+  {id:'s79',deck:'syllables',korean:'불',answer:'bul',options:['bul','bun','bum','buk'],explanation:'ㅂ+ㅜ+ㄹ = bul. Means "fire".',breakdown:'ㅂ=b, ㅜ=u, ㄹ(final)=l',examples:[{k:'불',r:'bul',m:'fire'},{k:'불고기',r:'bulgogi',m:'bulgogi (grilled meat)'}]},
+  {id:'s80',deck:'syllables',korean:'글',answer:'geul',options:['geul','gol','gun','geuk'],explanation:'ㄱ+ㅡ+ㄹ = geul. Means "writing/text".',breakdown:'ㄱ=g, ㅡ=eu, ㄹ(final)=l',examples:[{k:'글',r:'geul',m:'writing/text'},{k:'한글',r:'hangeul',m:'Hangul script'}]},
+  {id:'s81',deck:'syllables',korean:'길',answer:'gil',options:['gil','gin','gim','gik'],explanation:'ㄱ+ㅣ+ㄹ = gil. Means "road/path".',breakdown:'ㄱ=g, ㅣ=i, ㄹ(final)=l',examples:[{k:'길',r:'gil',m:'road/path'},{k:'길이',r:'giri',m:'length'}]},
+  {id:'s82',deck:'syllables',korean:'집',answer:'jip',options:['jip','jin','jim','jik'],explanation:'ㅈ+ㅣ+ㅂ = jip. Means "house/home".',breakdown:'ㅈ=j, ㅣ=i, ㅂ(final)=p',examples:[{k:'집',r:'jip',m:'house/home'},{k:'집에',r:'jibe',m:'at home'}]},
+  {id:'s83',deck:'syllables',korean:'책',answer:'chaek',options:['chaek','chek','chak','chek'],explanation:'ㅊ+ㅐ+ㄱ = chaek. Means "book".',breakdown:'ㅊ=ch, ㅐ=ae, ㄱ(final)=k',examples:[{k:'책',r:'chaek',m:'book'},{k:'책상',r:'chaeksang',m:'desk'}]},
+  {id:'s84',deck:'syllables',korean:'돈',answer:'don',options:['don','dom','dok','dong'],explanation:'ㄷ+ㅗ+ㄴ = don. Means "money".',breakdown:'ㄷ=d, ㅗ=o, ㄴ(final)=n',examples:[{k:'돈',r:'don',m:'money'},{k:'돈이 없다',r:'doni eopda',m:'have no money'}]},
+  {id:'s85',deck:'syllables',korean:'밤',answer:'bam',options:['bam','ban','bap','bak'],explanation:'ㅂ+ㅏ+ㅁ = bam. Means "night" or "chestnut".',breakdown:'ㅂ=b, ㅏ=a, ㅁ(final)=m',examples:[{k:'밤',r:'bam',m:'night/chestnut'},{k:'밤새',r:'bamsae',m:'all night'}]},
+
+  /* ---- COMMON WORDS (150+) ---- */
+  {id:'w1',deck:'words',korean:'안녕하세요',answer:'annyeonghaseyo',options:['annyeonghaseyo','annyeong','annyeonghaseyo','yeoboseyo'],explanation:'Formal greeting. Literally "are you at peace?".',breakdown:'안녕 = peace, 하세요 = formal verb ending',examples:[{k:'안녕하세요!',r:'annyeonghaseyo',m:'Hello! (formal)'}]},
+  {id:'w2',deck:'words',korean:'감사합니다',answer:'gamsahamnida',options:['gamsahamnida','gamsawo','gomawo','gomapda'],explanation:'Formal "thank you".',breakdown:'감사 = gratitude, 합니다 = formal present tense',examples:[{k:'감사합니다!',r:'gamsahamnida',m:'Thank you! (formal)'}]},
+  {id:'w3',deck:'words',korean:'고마워',answer:'gomawo',options:['gomawo','gamsawo','mianhae','annyeong'],explanation:'Informal "thank you". Used with close friends.',breakdown:'고맙다 → 고마워 (informal conjugation)',examples:[{k:'고마워요',r:'gomawoyo',m:'Thank you (polite)'}]},
+  {id:'w4',deck:'words',korean:'미안해',answer:'mianhae',options:['mianhae','gwaenchanha','joahae','silpye'],explanation:'Informal "I\'m sorry".',breakdown:'미안하다 → 미안해 (informal)',examples:[{k:'미안해요',r:'mianhaeyo',m:'I\'m sorry (polite)'}]},
+  {id:'w5',deck:'words',korean:'괜찮아',answer:'gwaenchanha',options:['gwaenchanha','joahae','mianhae','annyeong'],explanation:'"It\'s okay" / "Are you okay?"',breakdown:'괜찮다 → 괜찮아 (informal)',examples:[{k:'괜찮아요?',r:'gwaenchanayo',m:'Are you okay?'}]},
+  {id:'w6',deck:'words',korean:'네',answer:'ne',options:['ne','a-ni','eung','nae'],explanation:'Yes (formal/polite). Also 네 = your (possessive).',breakdown:'네 = yes',examples:[{k:'네, 맞아요.',r:'ne, majayo',m:'Yes, that\'s right.'}]},
+  {id:'w7',deck:'words',korean:'아니요',answer:'aniyo',options:['aniyo','ani','an','ieyo'],explanation:'No (polite).',breakdown:'아니 = no + 요 (politeness)',examples:[{k:'아니요, 아니에요.',r:'aniyo, anieyo',m:'No, it isn\'t.'}]},
+  {id:'w8',deck:'words',korean:'뭐예요',answer:'mwoyeyo',options:['mwoyeyo','mwoya','mwoni','mwoyo'],explanation:'What is it? (polite)',breakdown:'뭐 = what, 예요 = is (polite)',examples:[{k:'이게 뭐예요?',r:'ige mwoyeyo',m:'What is this?'}]},
+  {id:'w9',deck:'words',korean:'어디',answer:'eodi',options:['eodi','yeogi','geogi','gogi'],explanation:'"Where?"',breakdown:'어디 = where',examples:[{k:'어디 가요?',r:'eodi gayo',m:'Where are you going?'}]},
+  {id:'w10',deck:'words',korean:'언제',answer:'eonje',options:['eonje','yeoje','oneul','naeil'],explanation:'"When?"',breakdown:'언제 = when',examples:[{k:'언제 와요?',r:'eonje wayo',m:'When are you coming?'}]},
+  {id:'w11',deck:'words',korean:'왜',answer:'wae',options:['wae','eodi','eotteo','mwo'],explanation:'"Why?"',breakdown:'왜 = why',examples:[{k:'왜요?',r:'waeyo',m:'Why?'}]},
+  {id:'w12',deck:'words',korean:'어떻게',answer:'eotteoke',options:['eotteoke','eonje','eodi','wae'],explanation:'"How?" — very common question word.',breakdown:'어떻게 = how',examples:[{k:'어떻게 해요?',r:'eotteoke haeyo',m:'How do you do it?'}]},
+  {id:'w13',deck:'words',korean:'얼마',answer:'eolma',options:['eolma','eodi','eotteoke','myeot'],explanation:'"How much?" — for prices.',breakdown:'얼마 = how much',examples:[{k:'얼마예요?',r:'eolmayeyo',m:'How much is it?'}]},
+  {id:'w14',deck:'words',korean:'오늘',answer:'oneul',options:['oneul','naeil','eoje','geunde'],explanation:'"Today".',breakdown:'오늘 = today',examples:[{k:'오늘 날씨가 좋아요.',r:'oneul nalssiga joayo',m:'The weather is nice today.'}]},
+  {id:'w15',deck:'words',korean:'내일',answer:'naeil',options:['naeil','oneul','eoje','itteu'],explanation:'"Tomorrow".',breakdown:'내일 = tomorrow',examples:[{k:'내일 봐요.',r:'naeil bwayo',m:'See you tomorrow.'}]},
+  {id:'w16',deck:'words',korean:'어제',answer:'eoje',options:['eoje','oneul','naeil','geude'],explanation:'"Yesterday".',breakdown:'어제 = yesterday',examples:[{k:'어제 뭐 했어요?',r:'eoje mwo haesseoyo',m:'What did you do yesterday?'}]},
+  {id:'w17',deck:'words',korean:'지금',answer:'jigeum',options:['jigeum','akkaji','naeil','oneul'],explanation:'"Now".',breakdown:'지금 = now',examples:[{k:'지금 어디에 있어요?',r:'jigeum eodie isseoyo',m:'Where are you now?'}]},
+  {id:'w18',deck:'words',korean:'사람',answer:'saram',options:['saram','geom','bun','nom'],explanation:'"Person/people".',breakdown:'사람 = person',examples:[{k:'한국 사람',r:'hanguk saram',m:'Korean person'}]},
+  {id:'w19',deck:'words',korean:'친구',answer:'chingu',options:['chingu','saram','oraboni','dongsaeng'],explanation:'"Friend".',breakdown:'친구 = friend',examples:[{k:'내 친구',r:'nae chingu',m:'my friend'}]},
+  {id:'w20',deck:'words',korean:'가족',answer:'gajok',options:['gajok','chingu','hwasik','siksik'],explanation:'"Family".',breakdown:'가족 = family',examples:[{k:'우리 가족',r:'uri gajok',m:'our family'}]},
+  {id:'w21',deck:'words',korean:'학교',answer:'hakgyo',options:['hakgyo','hoesa','byeongwon','dohseogwan'],explanation:'"School".',breakdown:'학 = study/learn, 교 = teach',examples:[{k:'학교에 가다',r:'hakgyoe gada',m:'to go to school'}]},
+  {id:'w22',deck:'words',korean:'집',answer:'jip',options:['jip','hoesa','bangul','siksik'],explanation:'"House/home".',breakdown:'집 = house',examples:[{k:'집에 있다',r:'jibe itda',m:'to be at home'}]},
+  {id:'w23',deck:'words',korean:'밥',answer:'bap',options:['bap','guk','mandu','kimchi'],explanation:'"Rice/meal". Central to Korean culture.',breakdown:'밥 = cooked rice/meal',examples:[{k:'밥 먹었어요?',r:'bap meogeosseoyo',m:'Did you eat? (greeting)'}]},
+  {id:'w24',deck:'words',korean:'물',answer:'mul',options:['mul','bap','guk','bul'],explanation:'"Water".',breakdown:'물 = water',examples:[{k:'물 주세요.',r:'mul juseyo',m:'Water please.'}]},
+  {id:'w25',deck:'words',korean:'하늘',answer:'haneul',options:['haneul','bada','san','sul'],explanation:'"Sky".',breakdown:'하늘 = sky',examples:[{k:'파란 하늘',r:'paran haneul',m:'blue sky'}]},
+  {id:'w26',deck:'words',korean:'바다',answer:'bada',options:['bada','haneul','san','gangul'],explanation:'"Sea/ocean".',breakdown:'바다 = sea',examples:[{k:'바다에 가다',r:'badae gada',m:'to go to the sea'}]},
+  {id:'w27',deck:'words',korean:'날씨',answer:'nalsssi',options:['nalsssi','oneul','baram','nunu'],explanation:'"Weather".',breakdown:'날 = day, 씨 = suffix',examples:[{k:'날씨가 어때요?',r:'nalssiga eottaeyo',m:'How\'s the weather?'}]},
+  {id:'w28',deck:'words',korean:'사랑',answer:'sarang',options:['sarang','chingu','gajok','haengbok'],explanation:'"Love".',breakdown:'사랑 = love',examples:[{k:'사랑해',r:'saranghae',m:'I love you'}]},
+  {id:'w29',deck:'words',korean:'행복',answer:'haengbok',options:['haengbok','sarang','gibbeum','seulpeum'],explanation:'"Happiness".',breakdown:'행 = luck/travel, 복 = blessing',examples:[{k:'haengbokada',r:'haengbokada',m:'to be happy'}]},
+  {id:'w30',deck:'words',korean:'시간',answer:'sigan',options:['sigan','nal','bun','cho'],explanation:'"Time/hour".',breakdown:'시간 = time/hour',examples:[{k:'시간이 없다',r:'sigani eopda',m:'have no time'}]},
+  {id:'w31',deck:'words',korean:'음식',answer:'eumsik',options:['eumsik','gajok','siksik','bap'],explanation:'"Food".',breakdown:'음 = eat/drink, 식 = food',examples:[{k:'한국 음식',r:'hanguk eumsik',m:'Korean food'}]},
+  {id:'w32',deck:'words',korean:'돈',answer:'don',options:['don','eolma','bap','sigan'],explanation:'"Money".',breakdown:'돈 = money',examples:[{k:'돈이 없어요.',r:'doni eopseoyo',m:'I have no money.'}]},
+  {id:'w33',deck:'words',korean:'일',answer:'il',options:['il','ibeol','siksik','don'],explanation:'"Work/day".',breakdown:'일 = work, number 1',examples:[{k:'일하다',r:'ilhada',m:'to work'}]},
+  {id:'w34',deck:'words',korean:'전화',answer:'jeonhwa',options:['jeonhwa','sigan','beon','il'],explanation:'"Phone/telephone".',breakdown:'전 = electricity, 화 = talk',examples:[{k:'전화하다',r:'jeonhwahada',m:'to call'}]},
+  {id:'w35',deck:'words',korean:'버스',answer:'beoseu',options:['beoseu','jihajeol','gicha','bikhi'],explanation:'"Bus".',breakdown:'버스 = bus (loanword)',examples:[{k:'버스 타다',r:'beoseu tada',m:'take a bus'}]},
+  {id:'w36',deck:'words',korean:'기차',answer:'gicha',options:['gicha','jihajeol','beoseu','bihaenggi'],explanation:'"Train".',breakdown:'기 = machine/steam, 차 = vehicle',examples:[{k:'기차역',r:'gichayeok',m:'train station'}]},
+  {id:'w37',deck:'words',korean:'비행기',answer:'bihaenggi',options:['bihaenggi','gicha','beoseu','bae'],explanation:'"Airplane".',breakdown:'비 = fly, 행 = travel, 기 = machine',examples:[{k:'비행기 타다',r:'bihaenggi tada',m:'take an airplane'}]},
+  {id:'w38',deck:'words',korean:'나라',answer:'nara',options:['nara','dosi','hanguk','miguk'],explanation:'"Country".',breakdown:'나라 = country',examples:[{k:'어느 나라 사람이에요?',r:'eoneu nara saramieyo',m:'What country are you from?'}]},
+  {id:'w39',deck:'words',korean:'한국',answer:'hanguk',options:['hanguk','miguk','ilbon','jungguk'],explanation:'"Korea".',breakdown:'한 = Korean, 국 = country',examples:[{k:'한국어를 배워요.',r:'hangugeoreul baewoyo',m:'I\'m learning Korean.'}]},
+  {id:'w40',deck:'words',korean:'영어',answer:'yeongeo',options:['yeongeo','hangugeo','ilboneo','junggugeo'],explanation:'"English (language)".',breakdown:'영 = England, 어 = language',examples:[{k:'영어를 할 수 있어요?',r:'yeongeoreul hal su isseoyo',m:'Can you speak English?'}]},
+  {id:'w41',deck:'words',korean:'한국어',answer:'hangugeo',options:['hangugeo','yeongeo','ilboneo','junggugeo'],explanation:'"Korean language".',breakdown:'한국 = Korea, 어 = language',examples:[{k:'한국어 공부해요.',r:'hangugeo gongbuhaeyo',m:'I study Korean.'}]},
+  {id:'w42',deck:'words',korean:'공부',answer:'gongbu',options:['gongbu','ilhagi','badagi','nomgi'],explanation:'"Studying".',breakdown:'공부 = study',examples:[{k:'gongbuhada',r:'gongbuhada',m:'to study'}]},
+  {id:'w43',deck:'words',korean:'선생님',answer:'seonsaengnim',options:['seonsaengnim','haksaeng','gyosu','bujang'],explanation:'"Teacher". 님 is an honorific suffix.',breakdown:'선생 = teacher, 님 = honorific',examples:[{k:'선생님, 감사합니다.',r:'seonsaengnim, gamsahamnida',m:'Thank you, teacher.'}]},
+  {id:'w44',deck:'words',korean:'학생',answer:'haksaeng',options:['haksaeng','seonsaengnim','gusaeng','gyohaksaeng'],explanation:'"Student".',breakdown:'학 = study, 생 = person/life',examples:[{k:'저는 학생이에요.',r:'jeoneun haksaengieyo',m:'I\'m a student.'}]},
+  {id:'w45',deck:'words',korean:'회사',answer:'hoesa',options:['hoesa','hakgyo','byeongwon','gajong'],explanation:'"Company/office".',breakdown:'회 = meet/gather, 사 = company',examples:[{k:'회사에 다니다',r:'hoesae danida',m:'to work at a company'}]},
+  {id:'w46',deck:'words',korean:'병원',answer:'byeongwon',options:['byeongwon','hoesa','hakgyo','yakguk'],explanation:'"Hospital".',breakdown:'병 = sick, 원 = institution',examples:[{k:'병원에 가다',r:'byeongwone gada',m:'to go to the hospital'}]},
+  {id:'w47',deck:'words',korean:'약국',answer:'yakguk',options:['yakguk','byeongwon','hoesa','hakgyo'],explanation:'"Pharmacy".',breakdown:'약 = medicine, 국 = country/place',examples:[{k:'약국 어디에 있어요?',r:'yakguk eodie isseoyo',m:'Where is the pharmacy?'}]},
+  {id:'w48',deck:'words',korean:'식당',answer:'sikdang',options:['sikdang','kahpye','masum','deop'],explanation:'"Restaurant".',breakdown:'식 = food, 당 = hall',examples:[{k:'식당에서 먹다',r:'sikdangeseo meokda',m:'eat at a restaurant'}]},
+  {id:'w49',deck:'words',korean:'카페',answer:'kape',options:['kape','sikdang','baekwajeo','sigjang'],explanation:'"Cafe" (loanword).',breakdown:'카페 = café (from French)',examples:[{k:'카페에서 공부하다',r:'kapeeseo gongbuhada',m:'study at a café'}]},
+  {id:'w50',deck:'words',korean:'마트',answer:'mateu',options:['mateu','baekwajeo','sigjang','seonmulgwan'],explanation:'"Mart/supermarket" (loanword).',breakdown:'마트 = mart (from English)',examples:[{k:'마트에 가다',r:'mateue gada',m:'go to the mart'}]},
+  {id:'w51',deck:'words',korean:'아침',answer:'achim',options:['achim','jeomsim','jeonyeok','bam'],explanation:'"Morning" or "breakfast".',breakdown:'아침 = morning/breakfast',examples:[{k:'아침을 먹다',r:'achimeul meokda',m:'eat breakfast'}]},
+  {id:'w52',deck:'words',korean:'점심',answer:'jeomsim',options:['jeomsim','achim','jeonyeok','bam'],explanation:'"Lunch/noon".',breakdown:'점심 = lunch',examples:[{k:'점심 먹었어요?',r:'jeomsim meogeosseoyo',m:'Did you eat lunch?'}]},
+  {id:'w53',deck:'words',korean:'저녁',answer:'jeonyeok',options:['jeonyeok','achim','jeomsim','bam'],explanation:'"Evening" or "dinner".',breakdown:'저녁 = evening/dinner',examples:[{k:'저녁을 먹다',r:'jeonyeogeul meokda',m:'eat dinner'}]},
+  {id:'w54',deck:'words',korean:'주말',answer:'jumal',options:['jumal','juil','jusaek','juso'],explanation:'"Weekend".',breakdown:'주 = week, 말 = end',examples:[{k:'주말에 뭐 해요?',r:'jumale mwo haeyo',m:'What do you do on weekends?'}]},
+  {id:'w55',deck:'words',korean:'월요일',answer:'woryoil',options:['woryoil','hwayoil','suyoil','moyoil'],explanation:'"Monday".',breakdown:'월 = moon, 요일 = day of week',examples:[{k:'월요일에 만나요.',r:'woryoile mannayo',m:'Let\'s meet on Monday.'}]},
+  {id:'w56',deck:'words',korean:'일요일',answer:'iryoil',options:['iryoil','toyoil','geumoil','suyoil'],explanation:'"Sunday".',breakdown:'일 = sun/day 1, 요일 = day of week',examples:[{k:'일요일에 쉬어요.',r:'iryoile swieoyo',m:'I rest on Sunday.'}]},
+  {id:'w57',deck:'words',korean:'봄',answer:'bom',options:['bom','yeoreum','gaeul','gyeoul'],explanation:'"Spring" (season).',breakdown:'봄 = spring',examples:[{k:'봄이 왔어요.',r:'bomi wasseoyo',m:'Spring has come.'}]},
+  {id:'w58',deck:'words',korean:'여름',answer:'yeoreum',options:['yeoreum','bom','gaeul','gyeoul'],explanation:'"Summer".',breakdown:'여름 = summer',examples:[{k:'여름이 더워요.',r:'yeoreumi deowoyo',m:'Summer is hot.'}]},
+  {id:'w59',deck:'words',korean:'가을',answer:'gaeul',options:['gaeul','bom','yeoreum','gyeoul'],explanation:'"Autumn/Fall".',breakdown:'가을 = autumn',examples:[{k:'가을 단풍',r:'gaeul danpung',m:'autumn foliage'}]},
+  {id:'w60',deck:'words',korean:'겨울',answer:'gyeoul',options:['gyeoul','bom','yeoreum','gaeul'],explanation:'"Winter".',breakdown:'겨울 = winter',examples:[{k:'겨울이 추워요.',r:'gyeouli chuwoyo',m:'Winter is cold.'}]},
+  {id:'w61',deck:'words',korean:'날씨',answer:'nalsssi',options:['nalsssi','balam','bi','nun'],explanation:'"Weather".',breakdown:'날씨 = weather',examples:[{k:'날씨가 좋아요.',r:'nalssiga joayo',m:'The weather is nice.'}]},
+  {id:'w62',deck:'words',korean:'비',answer:'bi',options:['bi','nun','balam','haetssal'],explanation:'"Rain".',breakdown:'비 = rain',examples:[{k:'비가 와요.',r:'biga wayo',m:'It\'s raining.'}]},
+  {id:'w63',deck:'words',korean:'눈',answer:'nun',options:['nun','bi','balam','eo-eum'],explanation:'"Snow" or "eye".',breakdown:'눈 = snow / eye (context-dependent)',examples:[{k:'눈이 와요.',r:'nuni wayo',m:'It\'s snowing.'}]},
+  {id:'w64',deck:'words',korean:'바람',answer:'baram',options:['baram','bi','nun','haetssal'],explanation:'"Wind".',breakdown:'바람 = wind',examples:[{k:'바람이 불어요.',r:'barami bureoyo',m:'The wind blows.'}]},
+  {id:'w65',deck:'words',korean:'더워요',answer:'deowoyo',options:['deowoyo','chuwoyo','deowoyo','tteugeowoyo'],explanation:'"It\'s hot".',breakdown:'덥다 → 더워요 (conjugated)',examples:[{k:'오늘 더워요.',r:'oneul deowoyo',m:'It\'s hot today.'}]},
+  {id:'w66',deck:'words',korean:'추워요',answer:'chuwoyo',options:['chuwoyo','deowoyo','siwonahaeyo','ttatteutaeyo'],explanation:'"It\'s cold".',breakdown:'춥다 → 추워요 (conjugated)',examples:[{k:'오늘 추워요.',r:'oneul chuwoyo',m:'It\'s cold today.'}]},
+  {id:'w67',deck:'words',korean:'좋아요',answer:'joayo',options:['joayo','sireoyo','gomawoyo','mianhaeyo'],explanation:'"It\'s good/I like it".',breakdown:'좋다 → 좋아요 (conjugated)',examples:[{k:'음식이 좋아요.',r:'eumsigi joayo',m:'The food is good.'}]},
+  {id:'w68',deck:'words',korean:'싫어요',answer:'sireoyo',options:['sireoyo','joayo','gomawoyo','mianhaeyo'],explanation:'"I don\'t like it/I hate it".',breakdown:'싫다 → 싫어요 (conjugated)',examples:[{k:'그거 싫어요.',r:'geugeo sireoyo',m:'I don\'t like that.'}]},
+  {id:'w69',deck:'words',korean:'알아요',answer:'arayo',options:['arayo','molrayo','itda','eopda'],explanation:'"I know".',breakdown:'알다 → 알아요 (conjugated)',examples:[{k:'알아요.',r:'arayo',m:'I know.'}]},
+  {id:'w70',deck:'words',korean:'몰라요',answer:'molrayo',options:['molrayo','arayo','itda','eopda'],explanation:'"I don\'t know".',breakdown:'모르다 → 몰라요 (conjugated)',examples:[{k:'몰라요.',r:'molrayo',m:'I don\'t know.'}]},
+  {id:'w71',deck:'words',korean:'이해해요',answer:'ihaehaeyo',options:['ihaehaeyo','arayo','molrayo','dolrayo'],explanation:'"I understand".',breakdown:'이해하다 → 이해해요',examples:[{k:'이해해요.',r:'ihaehaeyo',m:'I understand.'}]},
+  {id:'w72',deck:'words',korean:'주세요',answer:'juseyo',options:['juseyo','gaseyo','oseyo','haseyo'],explanation:'"Please give me...".',breakdown:'주다 = give, 세요 = polite imperative',examples:[{k:'물 주세요.',r:'mul juseyo',m:'Please give me water.'}]},
+  {id:'w73',deck:'words',korean:'하세요',answer:'haseyo',options:['haseyo','gaseyo','oseyo','juseyo'],explanation:'"Please do..." (polite command).',breakdown:'하다 = do, 세요 = polite imperative',examples:[{k:'잠깐만 기다리세요.',r:'jamkkanman gidariseyo',m:'Please wait a moment.'}]},
+  {id:'w74',deck:'words',korean:'gaseyo',answer:'gaseyo',options:['gaseyo','oseyo','haseyo','juseyo'],explanation:'"Please go" / Farewell expression.',breakdown:'가다 = go, 세요 = polite imperative',examples:[{k:'잘 가세요.',r:'jal gaseyo',m:'Goodbye (to someone leaving)'}]},
+  {id:'w75',deck:'words',korean:'oseyo',answer:'oseyo',options:['oseyo','gaseyo','haseyo','juseyo'],explanation:'"Please come".',breakdown:'오다 = come, 세요 = polite imperative',examples:[{k:'어서 오세요.',r:'eoseo oseyo',m:'Welcome! (lit. "please come quickly")'}]},
+  {id:'w76',deck:'words',korean:'먹다',answer:'meokda',options:['meokda','masida','boda','deutda'],explanation:'"To eat".',breakdown:'먹다 = eat',examples:[{k:'밥을 먹다',r:'babeul meokda',m:'to eat rice'}]},
+  {id:'w77',deck:'words',korean:'마시다',answer:'masida',options:['masida','meokda','boda','deutda'],explanation:'"To drink".',breakdown:'마시다 = drink',examples:[{k:'물을 마시다',r:'mureul masida',m:'to drink water'}]},
+  {id:'w78',deck:'words',korean:'자다',answer:'jada',options:['jada','ireona','deutda','boda'],explanation:'"To sleep".',breakdown:'자다 = sleep',examples:[{k:'잘 자.',r:'jal ja',m:'Sleep well.'}]},
+  {id:'w79',deck:'words',korean:'일어나다',answer:'ireonada',options:['ireonada','jada','deutda','boda'],explanation:'"To wake up/get up".',breakdown:'일어나다 = wake up',examples:[{k:'아침에 일어나다',r:'achime ireonada',m:'wake up in the morning'}]},
+  {id:'w80',deck:'words',korean:'가다',answer:'gada',options:['gada','oda','oseyo','gaseyo'],explanation:'"To go".',breakdown:'가다 = go',examples:[{k:'학교에 가다',r:'hakgyoe gada',m:'go to school'}]},
+  {id:'w81',deck:'words',korean:'oda',answer:'oda',options:['oda','gada','hada','boda'],explanation:'"To come".',breakdown:'오다 = come',examples:[{k:'집에 오다',r:'jibe oda',m:'come home'}]},
+  {id:'w82',deck:'words',korean:'boda',answer:'boda',options:['boda','deutda','meokda','masida'],explanation:'"To see/watch".',breakdown:'보다 = see/watch',examples:[{k:'영화를 보다',r:'yeonghwareul boda',m:'watch a movie'}]},
+  {id:'w83',deck:'words',korean:'deutda',answer:'deutda',options:['deutda','boda','meokda','malda'],explanation:'"To listen/hear".',breakdown:'듣다 = listen',examples:[{k:'음악을 듣다',r:'eumageul deutda',m:'listen to music'}]},
+  {id:'w84',deck:'words',korean:'malhada',answer:'malhada',options:['malhada','deutda','boda','sseuneuda'],explanation:'"To speak/say".',breakdown:'말 = words, 하다 = do',examples:[{k:'한국어로 말하다',r:'hangugeoro malhada',m:'speak in Korean'}]},
+  {id:'w85',deck:'words',korean:'읽다',answer:'ikda',options:['ikda','sseuneuda','boda','deutda'],explanation:'"To read".',breakdown:'읽다 = read (ㄱ is silent here)',examples:[{k:'책을 읽다',r:'chaekeul ikda',m:'read a book'}]},
+  {id:'w86',deck:'words',korean:'쓰다',answer:'sseuda',options:['sseuda','ikda','boda','deutda'],explanation:'"To write" or "to use".',breakdown:'쓰다 = write/use',examples:[{k:'편지를 쓰다',r:'pyeonjireul sseuda',m:'write a letter'}]},
+  {id:'w87',deck:'words',korean:'sada',answer:'sada',options:['sada','palda','boda','deutda'],explanation:'"To buy".',breakdown:'사다 = buy',examples:[{k:'옷을 사다',r:'oseul sada',m:'buy clothes'}]},
+  {id:'w88',deck:'words',korean:'팔다',answer:'palda',options:['palda','sada','boda','deutda'],explanation:'"To sell".',breakdown:'팔다 = sell',examples:[{k:'물건을 팔다',r:'mulgeoneul palda',m:'sell goods'}]},
+  {id:'w89',deck:'words',korean:'alda',answer:'alda',options:['alda','moreuda','deutda','boda'],explanation:'"To know".',breakdown:'알다 = know',examples:[{k:'한국어를 알다',r:'hangugeoreul alda',m:'know Korean'}]},
+  {id:'w90',deck:'words',korean:'모르다',answer:'moreuda',options:['moreuda','alda','boda','deutda'],explanation:'"To not know".',breakdown:'모르다 = not know',examples:[{k:'이름을 모르다',r:'ireumeul moreuda',m:'not know the name'}]},
+  {id:'w91',deck:'words',korean:'있다',answer:'itda',options:['itda','eopda','dweda','doeda'],explanation:'"To exist/have".',breakdown:'있다 = exist/have',examples:[{k:'시간이 있다',r:'sigani itda',m:'have time'}]},
+  {id:'w92',deck:'words',korean:'없다',answer:'eopda',options:['eopda','itda','dweda','doeda'],explanation:'"To not exist/not have".',breakdown:'없다 = not exist/not have',examples:[{k:'돈이 없다',r:'doni eopda',m:'have no money'}]},
+  {id:'w93',deck:'words',korean:'좋다',answer:'jota',options:['jota','nappeuda','tteugeopda','chupda'],explanation:'"To be good".',breakdown:'좋다 = good',examples:[{k:'날씨가 좋다',r:'nalssiga jota',m:'weather is good'}]},
+  {id:'w94',deck:'words',korean:'나쁘다',answer:'nappeuda',options:['nappeuda','jota','tteugeopda','chupda'],explanation:'"To be bad".',breakdown:'나쁘다 = bad',examples:[{k:'날씨가 나쁘다',r:'nalssiga nappeuda',m:'weather is bad'}]},
+  {id:'w95',deck:'words',korean:'크다',answer:'keuda',options:['keuda','jakda','gireopda','nopda'],explanation:'"To be big/large".',breakdown:'크다 = big',examples:[{k:'큰 집',r:'keun jip',m:'big house'}]},
+  {id:'w96',deck:'words',korean:'작다',answer:'jakda',options:['jakda','keuda','gireopda','nopda'],explanation:'"To be small".',breakdown:'작다 = small',examples:[{k:'작은 강아지',r:'jageun gangaji',m:'small puppy'}]},
+  {id:'w97',deck:'words',korean:'많다',answer:'manta',options:['manta','jokda','gireopda','jeokda'],explanation:'"To be many/much".',breakdown:'많다 = many/much',examples:[{k:'사람이 많다',r:'sarami manta',m:'there are many people'}]},
+  {id:'w98',deck:'words',korean:'적다',answer:'jeokda',options:['jeokda','manta','gireopda','keuda'],explanation:'"To be few/little".',breakdown:'적다 = few/little',examples:[{k:'시간이 적다',r:'sigani jeokda',m:'little time'}]},
+  {id:'w99',deck:'words',korean:'빠르다',answer:'ppareuda',options:['ppareuda','neutda','gireopda','gveuda'],explanation:'"To be fast".',breakdown:'빠르다 = fast',examples:[{k:'빠른 기차',r:'ppareun gicha',m:'fast train'}]},
+  {id:'w100',deck:'words',korean:'느리다',answer:'neurida',options:['neurida','ppareuda','gireopda','nopda'],explanation:'"To be slow".',breakdown:'느리다 = slow',examples:[{k:'느린 거북이',r:'neurin geobuki',m:'slow turtle'}]},
+  {id:'w101',deck:'words',korean:'예쁘다',answer:'yeppeuda',options:['yeppeuda','ireopda','nalkaropda','gwiyeopda'],explanation:'"To be pretty".',breakdown:'예쁘다 = pretty',examples:[{k:'꽃이 예쁘다',r:'kkochi yeppeuda',m:'flowers are pretty'}]},
+  {id:'w102',deck:'words',korean:'gwiyeopda',answer:'gwiyeopda',options:['gwiyeopda','yeppeuda','meositda','isanghada'],explanation:'"To be cute".',breakdown:'귀엽다 = cute',examples:[{k:'강아지가 귀엽다',r:'gangajiga gwiyeopda',m:'the puppy is cute'}]},
+  {id:'w103',deck:'words',korean:'맛있다',answer:'masitda',options:['masitda','maeopda','jamit','isang'],explanation:'"Delicious/tasty".',breakdown:'맛 = taste, 있다 = have',examples:[{k:'음식이 맛있다',r:'eumsigi masitda',m:'the food is delicious'}]},
+  {id:'w104',deck:'words',korean:'맛없다',answer:'maseopda',options:['maseopda','masitda','matnada','isangita'],explanation:'"Not tasty/tasteless".',breakdown:'맛 = taste, 없다 = not have',examples:[{k:'음식이 맛없다',r:'eumsigi maseopda',m:'the food is not tasty'}]},
+  {id:'w105',deck:'words',korean:'jaemiitda',answer:'jaemiitda',options:['jaemiitda','jaemiopda','sinnada','simsimhada'],explanation:'"Interesting/fun".',breakdown:'재미 = fun/interest, 있다 = have',examples:[{k:'영화가 재미있다',r:'yeonghwaga jaemiitda',m:'the movie is interesting'}]},
+  {id:'w106',deck:'words',korean:'pigonhada',answer:'pigonhada',options:['pigonhada','geonganghada','haengbokada','seulpeuda'],explanation:'"To be tired".',breakdown:'피곤 = fatigue, 하다 = be',examples:[{k:'오늘 피곤해요.',r:'oneul pigonhaeyo',m:'I\'m tired today.'}]},
+  {id:'w107',deck:'words',korean:'배고파',answer:'baegopa',options:['baegopa','baebulleo','mongmalla','pigonhae'],explanation:'"(I\'m) hungry" (informal).',breakdown:'배고프다 → 배고파 (informal)',examples:[{k:'배고파요.',r:'baegopayo',m:'I\'m hungry.'}]},
+  {id:'w108',deck:'words',korean:'baebulleo',answer:'baebulleo',options:['baebulleo','baegopa','mongmalla','pigonhae'],explanation:'"(I\'m) full" (informal).',breakdown:'배부르다 → 배불러 (informal)',examples:[{k:'배불러요.',r:'baebulleoyo',m:'I\'m full.'}]},
+  {id:'w109',deck:'words',korean:'gidarida',answer:'gidarida',options:['gidarida','chatda','japda','deonjida'],explanation:'"To wait".',breakdown:'기다리다 = wait',examples:[{k:'조금만 기다려.',r:'jogeumman gidaryeo',m:'Wait a little.'}]},
+  {id:'w110',deck:'words',korean:'chatda',answer:'chatda',options:['chatda','gidarida','japda','nota'],explanation:'"To look for/find".',breakdown:'찾다 = find/search',examples:[{k:'열쇠를 찾다',r:'yeolsoereul chatda',m:'look for keys'}]},
+  {id:'w111',deck:'words',korean:'열다',answer:'yeolda',options:['yeolda','datda','japda','nota'],explanation:'"To open".',breakdown:'열다 = open',examples:[{k:'문을 열다',r:'muneul yeolda',m:'open the door'}]},
+  {id:'w112',deck:'words',korean:'datda',answer:'datda',options:['datda','yeolda','japda','nota'],explanation:'"To close".',breakdown:'닫다 = close',examples:[{k:'문을 닫다',r:'muneul datda',m:'close the door'}]},
+  {id:'w113',deck:'words',korean:'sijakada',answer:'sijakada',options:['sijakada','kkeunnada','meomchuda','gyesokhada'],explanation:'"To start/begin".',breakdown:'시작 = start, 하다 = do',examples:[{k:'수업이 시작하다',r:'sueobi sijakada',m:'class begins'}]},
+  {id:'w114',deck:'words',korean:'kkeunnada',answer:'kkeunnada',options:['kkeunnada','sijakada','meomchuda','gyesokhada'],explanation:'"To end/finish".',breakdown:'끝 = end, 나다 = come out',examples:[{k:'수업이 끝났다',r:'sueobi kkeunnata',m:'class ended'}]},
+  {id:'w115',deck:'words',korean:'saenggakada',answer:'saenggakada',options:['saenggakada','neukkida','boda','deutda'],explanation:'"To think".',breakdown:'생각 = thought, 하다 = do',examples:[{k:'뭘 생각해요?',r:'mwol saenggakaeyo',m:'What are you thinking?'}]},
+  {id:'w116',deck:'words',korean:'neukkida',answer:'neukkida',options:['neukkida','saenggakada','boda','deutda'],explanation:'"To feel".',breakdown:'느끼다 = feel',examples:[{k:'어떻게 느껴요?',r:'eotteoke neukkiyeoyo',m:'How do you feel?'}]},
+  {id:'w117',deck:'words',korean:'mannada',answer:'mannada',options:['mannada','heeojida','gidarida','chatda'],explanation:'"To meet".',breakdown:'만나다 = meet',examples:[{k:'친구를 만나다',r:'chingureul mannada',m:'meet a friend'}]},
+  {id:'w118',deck:'words',korean:'iyagihada',answer:'iyagihada',options:['iyagihada','malhada','deutda','boda'],explanation:'"To talk/chat".',breakdown:'이야기 = story/talk, 하다 = do',examples:[{k:'친구랑 이야기하다',r:'chingurang iyagihada',m:'chat with a friend'}]},
+  {id:'w119',deck:'words',korean:'haengbokada',answer:'haengbokada',options:['haengbokada','seulpeuda','hwanada','pigonhada'],explanation:'"To be happy".',breakdown:'행복 = happiness, 하다 = be',examples:[{k:'나는 행복해.',r:'naneun haengbokhae',m:'I am happy.'}]},
+  {id:'w120',deck:'words',korean:'seulpeuda',answer:'seulpeuda',options:['seulpeuda','haengbokada','hwanada','gippeuda'],explanation:'"To be sad".',breakdown:'슬프다 = sad',examples:[{k:'영화가 슬프다',r:'yeonghwaga seulpeuda',m:'the movie is sad'}]},
+  {id:'w121',deck:'words',korean:'hwanada',answer:'hwanada',options:['hwanada','haengbokada','seulpeuda','gippeuda'],explanation:'"To be angry".',breakdown:'화 = anger, 나다 = arise',examples:[{k:'왜 화났어요?',r:'wae hwanasseoyo',m:'Why are you angry?'}]},
+  {id:'w122',deck:'words',korean:'gippeuda',answer:'gippeuda',options:['gippeuda','seulpeuda','hwanada','pigonhada'],explanation:'"To be glad/delighted".',breakdown:'기쁘다 = joyful',examples:[{k:'만나서 기쁘다',r:'mannaseo gippeuda',m:'glad to meet you'}]},
+  {id:'w123',deck:'words',korean:'무섭다',answer:'museopda',options:['museopda','gwiyeopda','jaemiitda','seulpeuda'],explanation:'"To be scary/scared".',breakdown:'무섭다 = scary',examples:[{k:'영화가 무서워요.',r:'yeonghwaga museowo yo',m:'The movie is scary.'}]},
+  {id:'w124',deck:'words',korean:'oryeopda',answer:'oryeopda',options:['oryeopda','swipda','jaemiitda','seulpeuda'],explanation:'"To be difficult".',breakdown:'어렵다 = difficult',examples:[{k:'한국어가 어려워요.',r:'hangugeoga oryeowoyo',m:'Korean is difficult.'}]},
+  {id:'w125',deck:'words',korean:'swipda',answer:'swipda',options:['swipda','oryeopda','jaemiitda','seulpeuda'],explanation:'"To be easy".',breakdown:'쉽다 = easy',examples:[{k:'이게 쉬워요.',r:'ige swiwoyo',m:'This is easy.'}]},
+  {id:'w126',deck:'words',korean:'새로운',answer:'saeroun',options:['saeroun','oraedoen','iksukhan','isanghan'],explanation:'"New".',breakdown:'새 = new, -로운 = adjective suffix',examples:[{k:'새로운 친구',r:'saeroun chingu',m:'new friend'}]},
+  {id:'w127',deck:'words',korean:'oraedoen',answer:'oraedoen',options:['oraedoen','saeroun','iksukhan','isanghan'],explanation:'"Old/aged".',breakdown:'오래 = long time, 된 = become',examples:[{k:'오래된 책',r:'oraedoen chaek',m:'old book'}]},
+  {id:'w128',deck:'words',korean:'jungyohada',answer:'jungyohada',options:['jungyohada','piryohada','ganeunghada','oryeopda'],explanation:'"To be important".',breakdown:'중요 = importance, 하다 = be',examples:[{k:'공부가 중요해요.',r:'gongbuga jungyohaeyo',m:'Studying is important.'}]},
+  {id:'w129',deck:'words',korean:'piryohada',answer:'piryohada',options:['piryohada','jungyohada','ganeunghada','oryeopda'],explanation:'"To be necessary/need".',breakdown:'필요 = need, 하다 = be',examples:[{k:'도움이 필요해요.',r:'doumi piryohaeyo',m:'I need help.'}]},
+  {id:'w130',deck:'words',korean:'ganeunghada',answer:'ganeunghada',options:['ganeunghada','bulganeunghada','jungyohada','piryohada'],explanation:'"To be possible".',breakdown:'가능 = possible, 하다 = be',examples:[{k:'가능해요.',r:'ganeunghaeyo',m:'It\'s possible.'}]},
+  {id:'w131',deck:'words',korean:'정말',answer:'jeongmal',options:['jeongmal','jinjja','ama','jeongdo'],explanation:'"Really/truly".',breakdown:'정말 = really',examples:[{k:'정말요?',r:'jeongmalyo',m:'Really?'}]},
+  {id:'w132',deck:'words',korean:'jinjja',answer:'jinjja',options:['jinjja','jeongmal','ama','geunyang'],explanation:'"Really/genuine" (emphatic, informal).',breakdown:'진짜 = real/genuine',examples:[{k:'진짜예요.',r:'jinjjayeyo',m:'It\'s real / Seriously.'}]},
+  {id:'w133',deck:'words',korean:'ama',answer:'ama',options:['ama','ajik','imi','tto'],explanation:'"Maybe/perhaps".',breakdown:'아마 = maybe',examples:[{k:'아마 괜찮을 거예요.',r:'ama gwaenchanheul geoyeyo',m:'It\'ll probably be okay.'}]},
+  {id:'w134',deck:'words',korean:'ajik',answer:'ajik',options:['ajik','imi','ama','beolsseo'],explanation:'"Still/yet".',breakdown:'아직 = still/yet',examples:[{k:'아직 몰라요.',r:'ajik molrayo',m:'I still don\'t know.'}]},
+  {id:'w135',deck:'words',korean:'imi',answer:'imi',options:['imi','ajik','beolsseo','ama'],explanation:'"Already".',breakdown:'이미 = already',examples:[{k:'이미 알아요.',r:'imi arayo',m:'I already know.'}]},
+  {id:'w136',deck:'words',korean:'gachi',answer:'gachi',options:['gachi','honja','ttaro','hamkke'],explanation:'"Together".',breakdown:'같이 = together (same as 함께)',examples:[{k:'같이 가요.',r:'gachi gayo',m:'Let\'s go together.'}]},
+  {id:'w137',deck:'words',korean:'honja',answer:'honja',options:['honja','gachi','hamkke','ttaro'],explanation:'"Alone/by oneself".',breakdown:'혼자 = alone',examples:[{k:'혼자 살아요.',r:'honja sarayo',m:'I live alone.'}]},
+  {id:'w138',deck:'words',korean:'cheoncheonhi',answer:'cheoncheonhi',options:['cheoncheonhi','ppalli','jogeum','mani'],explanation:'"Slowly".',breakdown:'천천 = slow, 히 = adverb suffix',examples:[{k:'천천히 말해 주세요.',r:'cheoncheonhi malhae juseyo',m:'Please speak slowly.'}]},
+  {id:'w139',deck:'words',korean:'ppalli',answer:'ppalli',options:['ppalli','cheoncheonhi','jogeum','najunge'],explanation:'"Quickly/fast".',breakdown:'빨리 = quickly',examples:[{k:'빨리 와!',r:'ppalli wa',m:'Come quickly!'}]},
+  {id:'w140',deck:'words',korean:'jogeum',answer:'jogeum',options:['jogeum','mani','ppalli','cheoncheonhi'],explanation:'"A little/a bit".',breakdown:'조금 = a little',examples:[{k:'조금만요.',r:'jogeummanyo',m:'Just a little.'}]},
+  {id:'w141',deck:'words',korean:'mani',answer:'mani',options:['mani','jogeum','ppalli','cheoncheonhi'],explanation:'"A lot/much".',breakdown:'많이 = a lot (많다 adverb form)',examples:[{k:'많이 드세요.',r:'mani deuseyo',m:'Please eat a lot.'}]},
+  {id:'w142',deck:'words',korean:'어서 오세요',answer:'eoseo oseyo',options:['eoseo oseyo','jal ga','annyeong','gamsahamnida'],explanation:'"Welcome!" — greeting in stores. Literally "please come quickly".',breakdown:'어서 = quickly, 오세요 = please come',examples:[{k:'어서 오세요!',r:'eoseo oseyo',m:'Welcome!'}]},
+  {id:'w143',deck:'words',korean:'잘 부탁드립니다',answer:'jal butakdeurimnida',options:['jal butakdeurimnida','gamsahamnida','mianhamnida','annyeonghaseyo'],explanation:'"I humbly ask for your favor" — used when starting a relationship.',breakdown:'잘 = well, 부탁 = request, 드립니다 = humble give',examples:[{k:'앞으로 잘 부탁드립니다.',r:'apeuro jal butakdeurimnida',m:'I look forward to working with you.'}]},
+  {id:'w144',deck:'words',korean:'처음 뵙겠습니다',answer:'cheoeum boepgessseumnida',options:['cheoeum boepgessseumnida','annyeonghaseyo','gamsahamnida','jal ga'],explanation:'"How do you do?" — very formal first meeting.',breakdown:'처음 = first time, 뵙겠습니다 = humble "see"',examples:[{k:'처음 뵙겠습니다.',r:'cheoeum boepgesseumnida',m:'Pleased to meet you. (formal)'}]},
+  {id:'w145',deck:'words',korean:'잠깐만요',answer:'jamkkanmanyo',options:['jamkkanmanyo','jamssimanyo','jogeummanyo','ittago'],explanation:'"Just a moment please".',breakdown:'잠깐 = moment, 만 = only, 요 = polite',examples:[{k:'잠깐만요!',r:'jamkkanmanyo',m:'Just a moment!'}]},
+  {id:'w146',deck:'words',korean:'실례합니다',answer:'sillyehamnida',options:['sillyehamnida','gamsahamnida','mianhamnida','annyeonghaseyo'],explanation:'"Excuse me" (polite, formal).',breakdown:'실례 = rude/discourtesy, 합니다 = do (formal)',examples:[{k:'실례합니다, 길 좀 가르쳐 주세요.',r:'sillyehamnida, gil jom gareuchyeo juseyo',m:'Excuse me, could you show me the way?'}]},
+  {id:'w147',deck:'words',korean:'어떻게 지내세요',answer:'eotteoke jinaeseyo',options:['eotteoke jinaeseyo','annyeonghaseyo','gamsahamnida','jal jinaeyo'],explanation:'"How are you?" (polite)',breakdown:'어떻게 = how, 지내세요 = are you doing',examples:[{k:'요즘 어떻게 지내세요?',r:'yojeum eotteoke jinaeseyo',m:'How have you been lately?'}]},
+  {id:'w148',deck:'words',korean:'잘 지내요',answer:'jal jinaeyo',options:['jal jinaeyo','gamsahamnida','mianhaeyo','moreugesseoyo'],explanation:'"I\'m doing well" (polite)',breakdown:'잘 = well, 지내요 = am doing (living)',examples:[{k:'잘 지내요, 고마워요.',r:'jal jinaeyo, gomawoyo',m:'I\'m doing well, thank you.'}]},
+  {id:'w149',deck:'words',korean:'배우다',answer:'bauda',options:['bauda','garuichida','gongbuhada','alda'],explanation:'"To learn".',breakdown:'배우다 = learn',examples:[{k:'한국어를 배우다',r:'hangugeoreul bauda',m:'learn Korean'}]},
+  {id:'w150',deck:'words',korean:'garuichida',answer:'garuichida',options:['garuichida','bauda','gongbuhada','alda'],explanation:'"To teach".',breakdown:'가르치다 = teach',examples:[{k:'영어를 가르치다',r:'yeongeoreul garuichida',m:'teach English'}]},
+  {id:'w151',deck:'words',korean:'도와주다',answer:'dowajuda',options:['dowajuda','chatda','gidarida','mannada'],explanation:'"To help".',breakdown:'도와 = help, 주다 = give',examples:[{k:'저 좀 도와주세요.',r:'jeo jom dowajuseyo',m:'Please help me.'}]},
+  {id:'w152',deck:'words',korean:'고르다',answer:'goreuda',options:['goreuda','chatda','sada','boda'],explanation:'"To choose/select".',breakdown:'고르다 = choose',examples:[{k:'음식을 고르다',r:'eumsigeul goreuda',m:'choose food'}]},
+  {id:'w153',deck:'words',korean:'연락하다',answer:'yeollakada',options:['yeollakada','mannada','iyagihada','chatda'],explanation:'"To contact".',breakdown:'연락 = contact, 하다 = do',examples:[{k:'나중에 연락해요.',r:'najunge yeollakaeyo',m:'Contact me later.'}]},
+  {id:'w154',deck:'words',korean:'준비하다',answer:'junbihada',options:['junbihada','sijakada','kkeunnada','gyesokhada'],explanation:'"To prepare".',breakdown:'준비 = preparation, 하다 = do',examples:[{k:'시험 준비하다',r:'siheom junbihada',m:'prepare for an exam'}]},
+  {id:'w155',deck:'words',korean:'결정하다',answer:'gyeoljeongada',options:['gyeoljeongada','saenggakada','neukkida','alda'],explanation:'"To decide".',breakdown:'결정 = decision, 하다 = do',examples:[{k:'뭐 먹을지 결정해요.',r:'mwo meogeulji gyeoljeonghaeyo',m:'Decide what to eat.'}]},
+];
+
+/* ============================================================
+   6. STORAGE ENGINE
+   ============================================================ */
+const STORAGE_KEY = 'hangul_garden_v2';
+
+function defaultState() {
+  return {
+    progress: {},       // { cardId: { correctCount, wrongCount, masteryLevel, nextReview } }
+    settings: { dark: false, anim: true, sound: true },
+    currentDeck: 'vowels',
+    currentIndex: 0,
+    answered: {},       // { cardId: chosenOption }
+    deckOrder: []       // shuffled card ID order for current deck
+  };
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return defaultState();
+    return Object.assign(defaultState(), JSON.parse(raw));
+  } catch(e) { return defaultState(); }
+}
+
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); } catch(e) {}
+}
+
+function getProgress(id) {
+  return STATE.progress[id] || { correctCount:0, wrongCount:0, masteryLevel:0, nextReview:0 };
+}
+
+let STATE = loadState();
+
+/* ============================================================
+   7. SRS ENGINE
+   ============================================================ */
+const SRS_INTERVALS = [5*60*1000, 24*60*60*1000, 3*24*60*60*1000, 7*24*60*60*1000, 30*24*60*60*1000];
+
+function updateSRS(id, correct) {
+  const p = getProgress(id);
+  const now = Date.now();
+  if (correct) {
+    p.correctCount++;
+    p.masteryLevel = Math.min(p.masteryLevel + 1, 4);
+  } else {
+    p.wrongCount++;
+    p.masteryLevel = Math.max(p.masteryLevel - 1, 0);
+  }
+  p.nextReview = now + SRS_INTERVALS[correct ? p.masteryLevel : 0];
+  STATE.progress[id] = p;
+  saveState();
+}
+
+function getDueCount() {
+  const now = Date.now();
+  return CARDS.filter(c => {
+    const p = getProgress(c.id);
+    return p.nextReview > 0 && p.nextReview <= now;
+  }).length;
+}
+
+function getMasteryLevel() {
+  if (!CARDS.length) return 0;
+  const total = CARDS.reduce((sum, c) => sum + getProgress(c.id).masteryLevel, 0);
+  return total / (CARDS.length * 4);
+}
+
+function getGardenStage() {
+  const m = getMasteryLevel();
+  if (m < 0.05) return {stage:'Seed',label:'Seed',pct:m};
+  if (m < 0.25) return {stage:'Bud',label:'Bud',pct:m};
+  if (m < 0.50) return {stage:'Flower',label:'Flower',pct:m};
+  if (m < 0.80) return {stage:'Bloom',label:'Bloom',pct:m};
+  return {stage:'Garden',label:'Garden',pct:m};
+}
+
+/* ============================================================
+   8. QUIZ ENGINE
+   ============================================================ */
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function getDeckCards(deck) {
+  return CARDS.filter(c => c.deck === deck);
+}
+
+function initQuiz(deck) {
+  STATE.currentDeck = deck;
+  STATE.currentIndex = 0;
+  STATE.answered = STATE.answered || {};
+  // Shuffle the deck order for this session
+  const cards = getDeckCards(deck);
+  STATE.deckOrder = shuffle(cards.map(c => c.id));
+  saveState();
+  renderQuiz();
+}
+
+function getCurrentDeck() {
+  const allCards = getDeckCards(STATE.currentDeck);
+  if (!allCards.length) return [];
+  const order = STATE.deckOrder && STATE.deckOrder.length === allCards.length
+    ? STATE.deckOrder : allCards.map(c => c.id);
+  return order.map(id => CARDS.find(c => c.id === id)).filter(Boolean);
+}
+
+function renderQuiz() {
+  const deck = getCurrentDeck();
+  if (!deck.length) return;
+  const idx = Math.max(0, Math.min(STATE.currentIndex, deck.length - 1));
+  const card = deck[idx];
+
+  // Progress
+  const answered = deck.filter(c => STATE.answered[c.id] !== undefined).length;
+  document.getElementById('progressFill').style.width = (answered / deck.length * 100) + '%';
+  document.getElementById('progressLabel').textContent = answered + ' / ' + deck.length + ' answered';
+
+  // Card content (only written once per card — stable, no reflow)
+  const deckNames = {vowels:'Vowels',consonants:'Consonants',combined:'Combined Vowels',double:'Double Consonants',batchim:'Batchim',syllables:'Syllables',words:'Words'};
+  document.getElementById('cardDeckTag').textContent = deckNames[card.deck] || card.deck;
+  document.getElementById('cardKorean').textContent = card.korean;
+  document.getElementById('cardHint').textContent = '';
+  document.getElementById('audioBtn').onclick = () => speakKorean(card.korean);
+
+  // Shuffle options once per card and cache on the card object so they stay stable
+  if (!card._shuffledOpts) card._shuffledOpts = shuffle(card.options.slice(0, 4));
+
+  // Options grid — rendered fresh per card, not per answer
+  const grid = document.getElementById('optionsGrid');
+  grid.innerHTML = '';
+  card._shuffledOpts.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => handleAnswer(opt, card);
+    grid.appendChild(btn);
+  });
+
+  // Clear feedback
+  const fb = document.getElementById('feedbackArea');
+  fb.innerHTML = '';
+
+  // Nav buttons
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').disabled = idx === deck.length - 1;
+  const nextUnanswered = deck.findIndex((c, i) => i > idx && STATE.answered[c.id] === undefined);
+  document.getElementById('nextUnansweredBtn').disabled = nextUnanswered === -1;
+
+  // If this card was already answered (e.g. navigating back), show state
+  if (STATE.answered[card.id] !== undefined) applyAnswer(card, STATE.answered[card.id]);
+}
+
+function applyAnswer(card, chosen) {
+  // Update options in place — no touching the question card
+  const grid = document.getElementById('optionsGrid');
+  Array.from(grid.children).forEach(btn => {
+    btn.disabled = true;
+    if (btn.textContent === card.answer) btn.classList.add('correct');
+    else if (btn.textContent === chosen && chosen !== card.answer) btn.classList.add('wrong');
+  });
+
+  // Show feedback below — completely outside the question card
+  const isCorrect = chosen === card.answer;
+  const fb = document.getElementById('feedbackArea');
+  fb.innerHTML = `
+    <div class="feedback-card ${isCorrect ? 'correct-fb' : 'wrong-fb'}">
+      <div class="feedback-title">${isCorrect ? 'Correct' : 'Incorrect — it\'s "' + card.answer + '"'}</div>
+      <div class="feedback-explanation">${card.explanation || ''}</div>
+      ${card.breakdown ? '<div class="feedback-breakdown">' + card.breakdown + '</div>' : ''}
+      ${card.examples && card.examples.length ? '<div class="feedback-examples">' + card.examples.map(e =>
+        `<span class="example-item"><strong>${e.k}</strong>${e.r ? ' ('+e.r+')' : ''} — ${e.m}</span>`
+      ).join('') + '</div>' : ''}
+    </div>`;
+
+  // Update nav
+  const deck = getCurrentDeck();
+  const idx = STATE.currentIndex;
+  const nextUnanswered = deck.findIndex((c, i) => i > idx && STATE.answered[c.id] === undefined);
+  document.getElementById('nextUnansweredBtn').disabled = nextUnanswered === -1;
+  document.getElementById('progressFill').style.width =
+    (deck.filter(c => STATE.answered[c.id] !== undefined).length / deck.length * 100) + '%';
+  document.getElementById('progressLabel').textContent =
+    deck.filter(c => STATE.answered[c.id] !== undefined).length + ' / ' + deck.length + ' answered';
+}
+
+function handleAnswer(chosen, card) {
+  if (STATE.answered[card.id] !== undefined) return; // already answered
+  const isCorrect = chosen === card.answer;
+  STATE.answered[card.id] = chosen;
+  updateSRS(card.id, isCorrect);
+
+  // Animate the question card
+  const qCard = document.getElementById('questionCard');
+  if (STATE.settings.anim) {
+    qCard.classList.remove('bloom-ripple', 'shake-wrong');
+    void qCard.offsetWidth;
+    qCard.classList.add(isCorrect ? 'bloom-ripple' : 'shake-wrong');
+    setTimeout(() => qCard.classList.remove('bloom-ripple', 'shake-wrong'), 700);
+  }
+
+  // Update options + show feedback WITHOUT re-rendering the question card
+  applyAnswer(card, chosen);
+  saveState();
+  updateGardenBadge();
+  updateDueBadge();
+}
+
+/* ============================================================
+   9. READING DRILL ENGINE
+   ============================================================ */
+let drillCards = [];
+
+function getDrillCards(difficulty) {
+  let pool;
+  if (difficulty === 'easy') pool = CARDS.filter(c => c.deck === 'vowels' || c.deck === 'consonants');
+  else if (difficulty === 'medium') pool = CARDS.filter(c => c.deck === 'syllables' || c.deck === 'batchim' || c.deck === 'combined');
+  else pool = CARDS.filter(c => c.deck === 'words' || c.deck === 'syllables');
+  // Shuffle
+  const arr = pool.slice();
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr.slice(0, 12);
+}
+
+function renderDrill() {
+  const diff = document.getElementById('difficultySelect').value;
+  drillCards = getDrillCards(diff);
+  const grid = document.getElementById('drillGrid');
+  grid.innerHTML = '';
+  drillCards.forEach(card => {
+    const item = document.createElement('div');
+    item.className = 'drill-item';
+    item.innerHTML = `<div class="drill-korean">${card.korean}</div><div class="drill-roman hidden">${card.answer}</div>`;
+    item.onclick = () => {
+      const r = item.querySelector('.drill-roman');
+      r.classList.toggle('hidden');
+      speakKorean(card.korean);
+    };
+    grid.appendChild(item);
+  });
+  document.getElementById('revealAllBtn').textContent = 'Reveal All';
+}
+
+function revealAll() {
+  const btn = document.getElementById('revealAllBtn');
+  const allHidden = document.querySelectorAll('#drillGrid .drill-roman.hidden');
+  if (allHidden.length > 0) {
+    document.querySelectorAll('#drillGrid .drill-roman').forEach(el => el.classList.remove('hidden'));
+    btn.textContent = 'Hide All';
+  } else {
+    document.querySelectorAll('#drillGrid .drill-roman').forEach(el => el.classList.add('hidden'));
+    btn.textContent = 'Reveal All';
+  }
+}
+
+/* ============================================================
+   10. SPEED ROUND ENGINE
+   ============================================================ */
+let speedState = {
+  cards: [], idx: 0, startTime: 0, cardStartTime: 0,
+  responseTimes: [], correct: 0, wrong: 0, timer: null, timeLeft: 60
+};
+
+function startSpeedRound() {
+  document.getElementById('speedStart').classList.add('hidden');
+  document.getElementById('speedGame').classList.remove('hidden');
+  document.getElementById('speedSummary').classList.add('hidden');
+
+  const pool = CARDS.slice();
+  for (let i = pool.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [pool[i], pool[j]] = [pool[j], pool[i]];
+  }
+  speedState = {
+    cards: pool.slice(0, 20), idx: 0, startTime: Date.now(),
+    cardStartTime: Date.now(), responseTimes: [], correct: 0, wrong: 0,
+    timer: null, timeLeft: 60
+  };
+
+  speedState.timer = setInterval(() => {
+    speedState.timeLeft--;
+    document.getElementById('speedTimer').textContent = speedState.timeLeft + 's';
+    if (speedState.timeLeft <= 0) endSpeedRound();
+  }, 1000);
+
+  renderSpeedCard();
+}
+
+function renderSpeedCard() {
+  if (speedState.idx >= speedState.cards.length) { endSpeedRound(); return; }
+  const card = speedState.cards[speedState.idx];
+  document.getElementById('speedCounter').textContent = (speedState.idx + 1) + ' / ' + speedState.cards.length;
+  document.getElementById('speedKorean').textContent = card.korean;
+  speedState.cardStartTime = Date.now();
+
+  const opts = document.getElementById('speedOptions');
+  opts.innerHTML = '';
+  shuffle(card.options.slice(0,4)).forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.textContent = opt;
+    btn.onclick = () => handleSpeedAnswer(opt, card);
+    opts.appendChild(btn);
+  });
+}
+
+function handleSpeedAnswer(chosen, card) {
+  const rt = Date.now() - speedState.cardStartTime;
+  speedState.responseTimes.push(rt);
+  const isCorrect = chosen === card.answer;
+  if (isCorrect) speedState.correct++; else speedState.wrong++;
+  updateSRS(card.id, isCorrect);
+
+  // Flash feedback
+  const sk = document.getElementById('speedKorean');
+  const color = isCorrect ? 'var(--sage)' : '#e57373';
+  sk.style.color = color;
+  setTimeout(() => { sk.style.color = ''; }, 300);
+
+  speedState.idx++;
+  setTimeout(renderSpeedCard, 350);
+}
+
+function endSpeedRound() {
+  clearInterval(speedState.timer);
+  document.getElementById('speedGame').classList.add('hidden');
+  document.getElementById('speedSummary').classList.remove('hidden');
+
+  const total = speedState.correct + speedState.wrong;
+  const accuracy = total ? Math.round(speedState.correct / total * 100) : 0;
+  const avgRt = speedState.responseTimes.length
+    ? Math.round(speedState.responseTimes.reduce((a,b) => a+b, 0) / speedState.responseTimes.length / 100) / 10
+    : 0;
+  const score = speedState.correct * 10 - speedState.wrong * 3;
+
+  document.getElementById('summaryStats').innerHTML = `
+    <div class="stat-item"><div class="stat-val">${speedState.correct}</div><div class="stat-label">Correct</div></div>
+    <div class="stat-item"><div class="stat-val">${speedState.wrong}</div><div class="stat-label">Wrong</div></div>
+    <div class="stat-item"><div class="stat-val">${accuracy}%</div><div class="stat-label">Accuracy</div></div>
+    <div class="stat-item"><div class="stat-val">${avgRt}s</div><div class="stat-label">Avg Time</div></div>
+    <div class="stat-item"><div class="stat-val">${Math.max(0,score)}</div><div class="stat-label">Score</div></div>
+  `;
+  updateGardenBadge();
+  updateDueBadge();
+}
+
+/* ============================================================
+   11. RENDERING — Garden, Stats, Badges
+   ============================================================ */
+function renderGardenSVG() {
+  const wrap = document.getElementById('gardenSvgWrap');
+  const gs = getGardenStage();
+  const mastery = getMasteryLevel();
+  const totalFlowers = Math.max(1, Math.floor(mastery * 30));
+  const desc = document.getElementById('gardenDesc');
+
+  const stageMessages = {
+    Seed: 'Your garden is just a seed. Keep practicing!',
+    Bud: 'Tiny buds are sprouting. You\'re making progress!',
+    Flower: 'Beautiful flowers are blooming in your garden!',
+    Bloom: 'Your garden is in full bloom — magnificent!',
+    Garden: 'A breathtaking garden of Korean mastery!'
+  };
+  desc.textContent = stageMessages[gs.stage] || '';
+
+  // Build SVG
+  const W = 320, H = 160;
+  let flowers = '';
+  const flowerPositions = [];
+  for (let i = 0; i < totalFlowers; i++) {
+    const x = 20 + (i % 8) * 37;
+    const y = 30 + Math.floor(i / 8) * 45;
+    const hue = 260 + (i * 17) % 80;
+    const size = 8 + (i % 3) * 3;
+    flowerPositions.push({x, y, hue, size});
+  }
+
+  flowers = flowerPositions.map(({x, y, hue, size}) => {
+    const petals = [0,60,120,180,240,300].map(angle => {
+      const rad = angle * Math.PI / 180;
+      const px = x + Math.cos(rad) * size * 0.7;
+      const py = y + Math.sin(rad) * size * 0.7;
+      return `<ellipse cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" rx="${(size*0.5).toFixed(1)}" ry="${(size*0.35).toFixed(1)}"
+        transform="rotate(${angle}, ${px.toFixed(1)}, ${py.toFixed(1)})"
+        fill="hsl(${hue},55%,72%)" opacity="0.85"/>`;
+    }).join('');
+    const stem = `<line x1="${x}" y1="${y+size*0.4}" x2="${x}" y2="${y+size*0.4+20}" stroke="hsl(140,35%,55%)" stroke-width="1.5"/>`;
+    const center = `<circle cx="${x}" cy="${y}" r="${(size*0.32).toFixed(1)}" fill="hsl(50,80%,70%)"/>`;
+    return `<g>${petals}${stem}${center}</g>`;
+  }).join('');
+
+  // Ground
+  const ground = `<ellipse cx="${W/2}" cy="${H-10}" rx="${W/2-10}" ry="12" fill="hsl(140,30%,75%)" opacity="0.3"/>`;
+  // Seeds (if early stage)
+  const seeds = gs.stage === 'Seed' ? `<circle cx="${W/2-20}" cy="${H-18}" r="4" fill="hsl(30,50%,60%)" opacity="0.5"/>
+    <circle cx="${W/2}" cy="${H-20}" r="5" fill="hsl(30,50%,55%)" opacity="0.5"/>
+    <circle cx="${W/2+25}" cy="${H-17}" r="3" fill="hsl(30,50%,60%)" opacity="0.5"/>` : '';
+
+  wrap.innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:320px;">
+    ${ground}${flowers}${seeds}
+  </svg>`;
+}
+
+function renderDeckStats() {
+  const container = document.getElementById('deckStats');
+  const deckList = ['vowels','consonants','combined','double','batchim','syllables','words'];
+  const deckNames = {vowels:'Vowels',consonants:'Consonants',combined:'Combined',double:'Double Cons.',batchim:'Batchim',syllables:'Syllables',words:'Words'};
+  container.innerHTML = '';
+  deckList.forEach(dk => {
+    const cards = getDeckCards(dk);
+    const mastered = cards.filter(c => getProgress(c.id).masteryLevel >= 3).length;
+    const pct = cards.length ? Math.round(mastered / cards.length * 100) : 0;
+    const div = document.createElement('div');
+    div.className = 'deck-stat-card';
+    div.innerHTML = `<div class="deck-stat-name">${deckNames[dk]}</div>
+      <div class="deck-stat-bar"><div class="deck-stat-fill" style="width:${pct}%"></div></div>
+      <div class="deck-stat-num">${mastered}/${cards.length}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function updateGardenBadge() {
+  const gs = getGardenStage();
+  const pct = Math.round(gs.pct * 100);
+  const label = document.getElementById('gardenLabel');
+  if (label) label.textContent = gs.stage + ' · ' + pct + '%';
+  const gardenTab = document.querySelector('[data-mode="garden"]');
+  if (gardenTab && gardenTab.classList.contains('active')) {
+    renderGardenSVG();
+    renderDeckStats();
+  }
+}
+
+function updateDueBadge() {
+  const due = getDueCount();
+  const badge = document.getElementById('dueBadge');
+  if (due > 0) {
+    badge.textContent = due + ' due';
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+}
+
+/* ============================================================
+   12. AUDIO
+   ============================================================ */
+function speakKorean(text) {
+  if (!STATE.settings.sound) return;
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'ko-KR';
+  utt.rate = 0.85;
+  utt.pitch = 1;
+  window.speechSynthesis.speak(utt);
+}
+
+/* ============================================================
+   13. SETTINGS
+   ============================================================ */
+function applySettings() {
+  const s = STATE.settings;
+  document.documentElement.setAttribute('data-theme', s.dark ? 'dark' : '');
+  document.getElementById('toggleDark').classList.toggle('on', s.dark);
+  document.getElementById('toggleAnim').classList.toggle('on', s.anim);
+  document.getElementById('toggleSound').classList.toggle('on', s.sound);
+  if (!s.anim) document.documentElement.setAttribute('data-no-anim','1');
+  else document.documentElement.removeAttribute('data-no-anim');
+}
+
+/* ============================================================
+   14. BUILD DECK SELECTOR
+   ============================================================ */
+function buildDeckSelector() {
+  const deckList = [
+    {id:'vowels',label:'Vowels'},
+    {id:'consonants',label:'Consonants'},
+    {id:'combined',label:'Combined Vowels'},
+    {id:'double',label:'Double Consonants'},
+    {id:'batchim',label:'Batchim'},
+    {id:'syllables',label:'Syllables'},
+    {id:'words',label:'Common Words'},
+  ];
+  const sel = document.getElementById('deckSelector');
+  sel.innerHTML = '';
+  deckList.forEach(d => {
+    const btn = document.createElement('button');
+    btn.className = 'deck-btn' + (d.id === STATE.currentDeck ? ' active' : '');
+    btn.textContent = d.label;
+    btn.onclick = () => {
+      document.querySelectorAll('.deck-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      STATE.answered = {};
+      initQuiz(d.id);
+    };
+    sel.appendChild(btn);
+  });
+}
+
+/* ============================================================
+   15. EVENT HANDLERS
+   ============================================================ */
+// Tabs
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const mode = tab.dataset.mode;
+    ['quiz','drill','speed','garden'].forEach(m => {
+      const sec = document.getElementById('sec-' + m);
+      if (sec) sec.classList.toggle('active', m === mode);
+    });
+    if (mode === 'garden') { renderGardenSVG(); renderDeckStats(); }
+    if (mode === 'drill') renderDrill();
+  };
+});
+
+// Quiz nav
+document.getElementById('prevBtn').onclick = () => {
+  const deck = getDeckCards(STATE.currentDeck);
+  if (STATE.currentIndex > 0) { STATE.currentIndex--; renderQuiz(); }
+};
+document.getElementById('nextBtn').onclick = () => {
+  const deck = getDeckCards(STATE.currentDeck);
+  if (STATE.currentIndex < deck.length - 1) { STATE.currentIndex++; renderQuiz(); }
+};
+document.getElementById('nextUnansweredBtn').onclick = () => {
+  const deck = getDeckCards(STATE.currentDeck);
+  const next = deck.findIndex((c, i) => i > STATE.currentIndex && STATE.answered[c.id] === undefined);
+  if (next !== -1) { STATE.currentIndex = next; renderQuiz(); }
+};
+document.getElementById('restartBtn').onclick = () => {
+  STATE.answered = {};
+  STATE.currentIndex = 0;
+  saveState();
+  renderQuiz();
+};
+
+// Drill controls
+document.getElementById('revealAllBtn').onclick = revealAll;
+document.getElementById('refreshDrillBtn').onclick = renderDrill;
+document.getElementById('difficultySelect').onchange = renderDrill;
+
+// Speed round
+document.getElementById('startSpeedBtn').onclick = startSpeedRound;
+document.getElementById('playAgainBtn').onclick = () => {
+  document.getElementById('speedSummary').classList.add('hidden');
+  document.getElementById('speedStart').classList.remove('hidden');
+};
+
+// Settings
+document.getElementById('settingsBtn').onclick = () => {
+  document.getElementById('settingsOverlay').classList.remove('hidden');
+};
+document.getElementById('closeSettingsBtn').onclick = () => {
+  document.getElementById('settingsOverlay').classList.add('hidden');
+};
+document.getElementById('toggleDark').onclick = function() {
+  STATE.settings.dark = !STATE.settings.dark;
+  saveState();
+  applySettings();
+};
+document.getElementById('toggleAnim').onclick = function() {
+  STATE.settings.anim = !STATE.settings.anim;
+  saveState();
+  applySettings();
+};
+document.getElementById('toggleSound').onclick = function() {
+  STATE.settings.sound = !STATE.settings.sound;
+  saveState();
+  applySettings();
+};
+document.getElementById('resetProgressBtn').onclick = () => {
+  if (confirm('Reset all progress? This cannot be undone.')) {
+    STATE = defaultState();
+    saveState();
+    buildDeckSelector();
+    initQuiz(STATE.currentDeck);
+    updateGardenBadge();
+    updateDueBadge();
+    document.getElementById('settingsOverlay').classList.add('hidden');
+  }
+};
+
+/* ============================================================
+   16. INIT
+   ============================================================ */
+applySettings();
+buildDeckSelector();
+initQuiz(STATE.currentDeck);
+updateGardenBadge();
+updateDueBadge();
+renderDrill();
+
+</script>
+</body>
+</html>
