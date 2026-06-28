@@ -115,6 +115,13 @@ body{
   cursor:pointer;transition:all var(--transition);}
 .deck-btn.active{background:var(--lavender-200);border-color:var(--lavender-300);color:var(--iris);}
 .deck-btn:hover:not(.active){border-color:var(--lavender-300);color:var(--wisteria);}
+.wrong-deck-btn{border-color:#fca5a5 !important;color:#dc2626 !important;}
+.wrong-deck-btn.active{background:#fff0f0 !important;border-color:#dc2626 !important;}
+[data-theme="dark"] .wrong-deck-btn{border-color:#6a2d2d !important;color:#f87171 !important;}
+[data-theme="dark"] .wrong-deck-btn.active{background:#2a0d0d !important;}
+.wrong-deck-btn:disabled{opacity:0.35;cursor:default;pointer-events:none;}
+.wrong-count{display:inline-block;background:#dc2626;color:#fff;font-size:0.65rem;font-weight:700;
+  padding:1px 5px;border-radius:10px;margin-left:4px;vertical-align:middle;}
 
 /* ============================================================
    8. PROGRESS BAR
@@ -708,22 +715,22 @@ const CARDS = [
   {id:'w71',deck:'words',korean:'이해해요',answer:'ihaehaeyo',options:['ihaehaeyo','arayo','molrayo','dolrayo'],explanation:'"I understand".',breakdown:'이해하다 → 이해해요',examples:[{k:'이해해요.',r:'ihaehaeyo',m:'I understand.'}]},
   {id:'w72',deck:'words',korean:'주세요',answer:'juseyo',options:['juseyo','gaseyo','oseyo','haseyo'],explanation:'"Please give me...".',breakdown:'주다 = give, 세요 = polite imperative',examples:[{k:'물 주세요.',r:'mul juseyo',m:'Please give me water.'}]},
   {id:'w73',deck:'words',korean:'하세요',answer:'haseyo',options:['haseyo','gaseyo','oseyo','juseyo'],explanation:'"Please do..." (polite command).',breakdown:'하다 = do, 세요 = polite imperative',examples:[{k:'잠깐만 기다리세요.',r:'jamkkanman gidariseyo',m:'Please wait a moment.'}]},
-  {id:'w74',deck:'words',korean:'gaseyo',answer:'gaseyo',options:['gaseyo','oseyo','haseyo','juseyo'],explanation:'"Please go" / Farewell expression.',breakdown:'가다 = go, 세요 = polite imperative',examples:[{k:'잘 가세요.',r:'jal gaseyo',m:'Goodbye (to someone leaving)'}]},
-  {id:'w75',deck:'words',korean:'oseyo',answer:'oseyo',options:['oseyo','gaseyo','haseyo','juseyo'],explanation:'"Please come".',breakdown:'오다 = come, 세요 = polite imperative',examples:[{k:'어서 오세요.',r:'eoseo oseyo',m:'Welcome! (lit. "please come quickly")'}]},
+  {id:'w74',deck:'words',korean:'가세요',answer:'gaseyo',options:['gaseyo','oseyo','haseyo','juseyo'],explanation:'"Please go" / Farewell expression.',breakdown:'가다 = go, 세요 = polite imperative',examples:[{k:'잘 가세요.',r:'jal gaseyo',m:'Goodbye (to someone leaving)'}]},
+  {id:'w75',deck:'words',korean:'오세요',answer:'oseyo',options:['oseyo','gaseyo','haseyo','juseyo'],explanation:'"Please come".',breakdown:'오다 = come, 세요 = polite imperative',examples:[{k:'어서 오세요.',r:'eoseo oseyo',m:'Welcome! (lit. "please come quickly")'}]},
   {id:'w76',deck:'words',korean:'먹다',answer:'meokda',options:['meokda','masida','boda','deutda'],explanation:'"To eat".',breakdown:'먹다 = eat',examples:[{k:'밥을 먹다',r:'babeul meokda',m:'to eat rice'}]},
   {id:'w77',deck:'words',korean:'마시다',answer:'masida',options:['masida','meokda','boda','deutda'],explanation:'"To drink".',breakdown:'마시다 = drink',examples:[{k:'물을 마시다',r:'mureul masida',m:'to drink water'}]},
   {id:'w78',deck:'words',korean:'자다',answer:'jada',options:['jada','ireona','deutda','boda'],explanation:'"To sleep".',breakdown:'자다 = sleep',examples:[{k:'잘 자.',r:'jal ja',m:'Sleep well.'}]},
   {id:'w79',deck:'words',korean:'일어나다',answer:'ireonada',options:['ireonada','jada','deutda','boda'],explanation:'"To wake up/get up".',breakdown:'일어나다 = wake up',examples:[{k:'아침에 일어나다',r:'achime ireonada',m:'wake up in the morning'}]},
   {id:'w80',deck:'words',korean:'가다',answer:'gada',options:['gada','oda','oseyo','gaseyo'],explanation:'"To go".',breakdown:'가다 = go',examples:[{k:'학교에 가다',r:'hakgyoe gada',m:'go to school'}]},
-  {id:'w81',deck:'words',korean:'oda',answer:'oda',options:['oda','gada','hada','boda'],explanation:'"To come".',breakdown:'오다 = come',examples:[{k:'집에 오다',r:'jibe oda',m:'come home'}]},
-  {id:'w82',deck:'words',korean:'boda',answer:'boda',options:['boda','deutda','meokda','masida'],explanation:'"To see/watch".',breakdown:'보다 = see/watch',examples:[{k:'영화를 보다',r:'yeonghwareul boda',m:'watch a movie'}]},
-  {id:'w83',deck:'words',korean:'deutda',answer:'deutda',options:['deutda','boda','meokda','malda'],explanation:'"To listen/hear".',breakdown:'듣다 = listen',examples:[{k:'음악을 듣다',r:'eumageul deutda',m:'listen to music'}]},
-  {id:'w84',deck:'words',korean:'malhada',answer:'malhada',options:['malhada','deutda','boda','sseuneuda'],explanation:'"To speak/say".',breakdown:'말 = words, 하다 = do',examples:[{k:'한국어로 말하다',r:'hangugeoro malhada',m:'speak in Korean'}]},
+  {id:'w81',deck:'words',korean:'오다',answer:'oda',options:['oda','gada','hada','boda'],explanation:'"To come".',breakdown:'오다 = come',examples:[{k:'집에 오다',r:'jibe oda',m:'come home'}]},
+  {id:'w82',deck:'words',korean:'보다',answer:'boda',options:['boda','deutda','meokda','masida'],explanation:'"To see/watch".',breakdown:'보다 = see/watch',examples:[{k:'영화를 보다',r:'yeonghwareul boda',m:'watch a movie'}]},
+  {id:'w83',deck:'words',korean:'듣다',answer:'deutda',options:['deutda','boda','meokda','malda'],explanation:'"To listen/hear".',breakdown:'듣다 = listen',examples:[{k:'음악을 듣다',r:'eumageul deutda',m:'listen to music'}]},
+  {id:'w84',deck:'words',korean:'말하다',answer:'malhada',options:['malhada','deutda','boda','sseuneuda'],explanation:'"To speak/say".',breakdown:'말 = words, 하다 = do',examples:[{k:'한국어로 말하다',r:'hangugeoro malhada',m:'speak in Korean'}]},
   {id:'w85',deck:'words',korean:'읽다',answer:'ikda',options:['ikda','sseuneuda','boda','deutda'],explanation:'"To read".',breakdown:'읽다 = read (ㄱ is silent here)',examples:[{k:'책을 읽다',r:'chaekeul ikda',m:'read a book'}]},
   {id:'w86',deck:'words',korean:'쓰다',answer:'sseuda',options:['sseuda','ikda','boda','deutda'],explanation:'"To write" or "to use".',breakdown:'쓰다 = write/use',examples:[{k:'편지를 쓰다',r:'pyeonjireul sseuda',m:'write a letter'}]},
-  {id:'w87',deck:'words',korean:'sada',answer:'sada',options:['sada','palda','boda','deutda'],explanation:'"To buy".',breakdown:'사다 = buy',examples:[{k:'옷을 사다',r:'oseul sada',m:'buy clothes'}]},
+  {id:'w87',deck:'words',korean:'사다',answer:'sada',options:['sada','palda','boda','deutda'],explanation:'"To buy".',breakdown:'사다 = buy',examples:[{k:'옷을 사다',r:'oseul sada',m:'buy clothes'}]},
   {id:'w88',deck:'words',korean:'팔다',answer:'palda',options:['palda','sada','boda','deutda'],explanation:'"To sell".',breakdown:'팔다 = sell',examples:[{k:'물건을 팔다',r:'mulgeoneul palda',m:'sell goods'}]},
-  {id:'w89',deck:'words',korean:'alda',answer:'alda',options:['alda','moreuda','deutda','boda'],explanation:'"To know".',breakdown:'알다 = know',examples:[{k:'한국어를 알다',r:'hangugeoreul alda',m:'know Korean'}]},
+  {id:'w89',deck:'words',korean:'알다',answer:'alda',options:['alda','moreuda','deutda','boda'],explanation:'"To know".',breakdown:'알다 = know',examples:[{k:'한국어를 알다',r:'hangugeoreul alda',m:'know Korean'}]},
   {id:'w90',deck:'words',korean:'모르다',answer:'moreuda',options:['moreuda','alda','boda','deutda'],explanation:'"To not know".',breakdown:'모르다 = not know',examples:[{k:'이름을 모르다',r:'ireumeul moreuda',m:'not know the name'}]},
   {id:'w91',deck:'words',korean:'있다',answer:'itda',options:['itda','eopda','dweda','doeda'],explanation:'"To exist/have".',breakdown:'있다 = exist/have',examples:[{k:'시간이 있다',r:'sigani itda',m:'have time'}]},
   {id:'w92',deck:'words',korean:'없다',answer:'eopda',options:['eopda','itda','dweda','doeda'],explanation:'"To not exist/not have".',breakdown:'없다 = not exist/not have',examples:[{k:'돈이 없다',r:'doni eopda',m:'have no money'}]},
@@ -736,46 +743,46 @@ const CARDS = [
   {id:'w99',deck:'words',korean:'빠르다',answer:'ppareuda',options:['ppareuda','neutda','gireopda','gveuda'],explanation:'"To be fast".',breakdown:'빠르다 = fast',examples:[{k:'빠른 기차',r:'ppareun gicha',m:'fast train'}]},
   {id:'w100',deck:'words',korean:'느리다',answer:'neurida',options:['neurida','ppareuda','gireopda','nopda'],explanation:'"To be slow".',breakdown:'느리다 = slow',examples:[{k:'느린 거북이',r:'neurin geobuki',m:'slow turtle'}]},
   {id:'w101',deck:'words',korean:'예쁘다',answer:'yeppeuda',options:['yeppeuda','ireopda','nalkaropda','gwiyeopda'],explanation:'"To be pretty".',breakdown:'예쁘다 = pretty',examples:[{k:'꽃이 예쁘다',r:'kkochi yeppeuda',m:'flowers are pretty'}]},
-  {id:'w102',deck:'words',korean:'gwiyeopda',answer:'gwiyeopda',options:['gwiyeopda','yeppeuda','meositda','isanghada'],explanation:'"To be cute".',breakdown:'귀엽다 = cute',examples:[{k:'강아지가 귀엽다',r:'gangajiga gwiyeopda',m:'the puppy is cute'}]},
+  {id:'w102',deck:'words',korean:'귀엽다',answer:'gwiyeopda',options:['gwiyeopda','yeppeuda','meositda','isanghada'],explanation:'"To be cute".',breakdown:'귀엽다 = cute',examples:[{k:'강아지가 귀엽다',r:'gangajiga gwiyeopda',m:'the puppy is cute'}]},
   {id:'w103',deck:'words',korean:'맛있다',answer:'masitda',options:['masitda','maeopda','jamit','isang'],explanation:'"Delicious/tasty".',breakdown:'맛 = taste, 있다 = have',examples:[{k:'음식이 맛있다',r:'eumsigi masitda',m:'the food is delicious'}]},
   {id:'w104',deck:'words',korean:'맛없다',answer:'maseopda',options:['maseopda','masitda','matnada','isangita'],explanation:'"Not tasty/tasteless".',breakdown:'맛 = taste, 없다 = not have',examples:[{k:'음식이 맛없다',r:'eumsigi maseopda',m:'the food is not tasty'}]},
-  {id:'w105',deck:'words',korean:'jaemiitda',answer:'jaemiitda',options:['jaemiitda','jaemiopda','sinnada','simsimhada'],explanation:'"Interesting/fun".',breakdown:'재미 = fun/interest, 있다 = have',examples:[{k:'영화가 재미있다',r:'yeonghwaga jaemiitda',m:'the movie is interesting'}]},
-  {id:'w106',deck:'words',korean:'pigonhada',answer:'pigonhada',options:['pigonhada','geonganghada','haengbokada','seulpeuda'],explanation:'"To be tired".',breakdown:'피곤 = fatigue, 하다 = be',examples:[{k:'오늘 피곤해요.',r:'oneul pigonhaeyo',m:'I\'m tired today.'}]},
+  {id:'w105',deck:'words',korean:'재미있다',answer:'jaemiitda',options:['jaemiitda','jaemiopda','sinnada','simsimhada'],explanation:'"Interesting/fun".',breakdown:'재미 = fun/interest, 있다 = have',examples:[{k:'영화가 재미있다',r:'yeonghwaga jaemiitda',m:'the movie is interesting'}]},
+  {id:'w106',deck:'words',korean:'피곤하다',answer:'pigonhada',options:['pigonhada','geonganghada','haengbokada','seulpeuda'],explanation:'"To be tired".',breakdown:'피곤 = fatigue, 하다 = be',examples:[{k:'오늘 피곤해요.',r:'oneul pigonhaeyo',m:'I\'m tired today.'}]},
   {id:'w107',deck:'words',korean:'배고파',answer:'baegopa',options:['baegopa','baebulleo','mongmalla','pigonhae'],explanation:'"(I\'m) hungry" (informal).',breakdown:'배고프다 → 배고파 (informal)',examples:[{k:'배고파요.',r:'baegopayo',m:'I\'m hungry.'}]},
-  {id:'w108',deck:'words',korean:'baebulleo',answer:'baebulleo',options:['baebulleo','baegopa','mongmalla','pigonhae'],explanation:'"(I\'m) full" (informal).',breakdown:'배부르다 → 배불러 (informal)',examples:[{k:'배불러요.',r:'baebulleoyo',m:'I\'m full.'}]},
-  {id:'w109',deck:'words',korean:'gidarida',answer:'gidarida',options:['gidarida','chatda','japda','deonjida'],explanation:'"To wait".',breakdown:'기다리다 = wait',examples:[{k:'조금만 기다려.',r:'jogeumman gidaryeo',m:'Wait a little.'}]},
-  {id:'w110',deck:'words',korean:'chatda',answer:'chatda',options:['chatda','gidarida','japda','nota'],explanation:'"To look for/find".',breakdown:'찾다 = find/search',examples:[{k:'열쇠를 찾다',r:'yeolsoereul chatda',m:'look for keys'}]},
+  {id:'w108',deck:'words',korean:'배불러',answer:'baebulleo',options:['baebulleo','baegopa','mongmalla','pigonhae'],explanation:'"(I\'m) full" (informal).',breakdown:'배부르다 → 배불러 (informal)',examples:[{k:'배불러요.',r:'baebulleoyo',m:'I\'m full.'}]},
+  {id:'w109',deck:'words',korean:'기다리다',answer:'gidarida',options:['gidarida','chatda','japda','deonjida'],explanation:'"To wait".',breakdown:'기다리다 = wait',examples:[{k:'조금만 기다려.',r:'jogeumman gidaryeo',m:'Wait a little.'}]},
+  {id:'w110',deck:'words',korean:'찾다',answer:'chatda',options:['chatda','gidarida','japda','nota'],explanation:'"To look for/find".',breakdown:'찾다 = find/search',examples:[{k:'열쇠를 찾다',r:'yeolsoereul chatda',m:'look for keys'}]},
   {id:'w111',deck:'words',korean:'열다',answer:'yeolda',options:['yeolda','datda','japda','nota'],explanation:'"To open".',breakdown:'열다 = open',examples:[{k:'문을 열다',r:'muneul yeolda',m:'open the door'}]},
-  {id:'w112',deck:'words',korean:'datda',answer:'datda',options:['datda','yeolda','japda','nota'],explanation:'"To close".',breakdown:'닫다 = close',examples:[{k:'문을 닫다',r:'muneul datda',m:'close the door'}]},
-  {id:'w113',deck:'words',korean:'sijakada',answer:'sijakada',options:['sijakada','kkeunnada','meomchuda','gyesokhada'],explanation:'"To start/begin".',breakdown:'시작 = start, 하다 = do',examples:[{k:'수업이 시작하다',r:'sueobi sijakada',m:'class begins'}]},
-  {id:'w114',deck:'words',korean:'kkeunnada',answer:'kkeunnada',options:['kkeunnada','sijakada','meomchuda','gyesokhada'],explanation:'"To end/finish".',breakdown:'끝 = end, 나다 = come out',examples:[{k:'수업이 끝났다',r:'sueobi kkeunnata',m:'class ended'}]},
-  {id:'w115',deck:'words',korean:'saenggakada',answer:'saenggakada',options:['saenggakada','neukkida','boda','deutda'],explanation:'"To think".',breakdown:'생각 = thought, 하다 = do',examples:[{k:'뭘 생각해요?',r:'mwol saenggakaeyo',m:'What are you thinking?'}]},
-  {id:'w116',deck:'words',korean:'neukkida',answer:'neukkida',options:['neukkida','saenggakada','boda','deutda'],explanation:'"To feel".',breakdown:'느끼다 = feel',examples:[{k:'어떻게 느껴요?',r:'eotteoke neukkiyeoyo',m:'How do you feel?'}]},
-  {id:'w117',deck:'words',korean:'mannada',answer:'mannada',options:['mannada','heeojida','gidarida','chatda'],explanation:'"To meet".',breakdown:'만나다 = meet',examples:[{k:'친구를 만나다',r:'chingureul mannada',m:'meet a friend'}]},
-  {id:'w118',deck:'words',korean:'iyagihada',answer:'iyagihada',options:['iyagihada','malhada','deutda','boda'],explanation:'"To talk/chat".',breakdown:'이야기 = story/talk, 하다 = do',examples:[{k:'친구랑 이야기하다',r:'chingurang iyagihada',m:'chat with a friend'}]},
-  {id:'w119',deck:'words',korean:'haengbokada',answer:'haengbokada',options:['haengbokada','seulpeuda','hwanada','pigonhada'],explanation:'"To be happy".',breakdown:'행복 = happiness, 하다 = be',examples:[{k:'나는 행복해.',r:'naneun haengbokhae',m:'I am happy.'}]},
-  {id:'w120',deck:'words',korean:'seulpeuda',answer:'seulpeuda',options:['seulpeuda','haengbokada','hwanada','gippeuda'],explanation:'"To be sad".',breakdown:'슬프다 = sad',examples:[{k:'영화가 슬프다',r:'yeonghwaga seulpeuda',m:'the movie is sad'}]},
-  {id:'w121',deck:'words',korean:'hwanada',answer:'hwanada',options:['hwanada','haengbokada','seulpeuda','gippeuda'],explanation:'"To be angry".',breakdown:'화 = anger, 나다 = arise',examples:[{k:'왜 화났어요?',r:'wae hwanasseoyo',m:'Why are you angry?'}]},
-  {id:'w122',deck:'words',korean:'gippeuda',answer:'gippeuda',options:['gippeuda','seulpeuda','hwanada','pigonhada'],explanation:'"To be glad/delighted".',breakdown:'기쁘다 = joyful',examples:[{k:'만나서 기쁘다',r:'mannaseo gippeuda',m:'glad to meet you'}]},
+  {id:'w112',deck:'words',korean:'닫다',answer:'datda',options:['datda','yeolda','japda','nota'],explanation:'"To close".',breakdown:'닫다 = close',examples:[{k:'문을 닫다',r:'muneul datda',m:'close the door'}]},
+  {id:'w113',deck:'words',korean:'시작하다',answer:'sijakada',options:['sijakada','kkeunnada','meomchuda','gyesokhada'],explanation:'"To start/begin".',breakdown:'시작 = start, 하다 = do',examples:[{k:'수업이 시작하다',r:'sueobi sijakada',m:'class begins'}]},
+  {id:'w114',deck:'words',korean:'끝나다',answer:'kkeunnada',options:['kkeunnada','sijakada','meomchuda','gyesokhada'],explanation:'"To end/finish".',breakdown:'끝 = end, 나다 = come out',examples:[{k:'수업이 끝났다',r:'sueobi kkeunnata',m:'class ended'}]},
+  {id:'w115',deck:'words',korean:'생각하다',answer:'saenggakada',options:['saenggakada','neukkida','boda','deutda'],explanation:'"To think".',breakdown:'생각 = thought, 하다 = do',examples:[{k:'뭘 생각해요?',r:'mwol saenggakaeyo',m:'What are you thinking?'}]},
+  {id:'w116',deck:'words',korean:'느끼다',answer:'neukkida',options:['neukkida','saenggakada','boda','deutda'],explanation:'"To feel".',breakdown:'느끼다 = feel',examples:[{k:'어떻게 느껴요?',r:'eotteoke neukkiyeoyo',m:'How do you feel?'}]},
+  {id:'w117',deck:'words',korean:'만나다',answer:'mannada',options:['mannada','heeojida','gidarida','chatda'],explanation:'"To meet".',breakdown:'만나다 = meet',examples:[{k:'친구를 만나다',r:'chingureul mannada',m:'meet a friend'}]},
+  {id:'w118',deck:'words',korean:'이야기하다',answer:'iyagihada',options:['iyagihada','malhada','deutda','boda'],explanation:'"To talk/chat".',breakdown:'이야기 = story/talk, 하다 = do',examples:[{k:'친구랑 이야기하다',r:'chingurang iyagihada',m:'chat with a friend'}]},
+  {id:'w119',deck:'words',korean:'행복하다',answer:'haengbokada',options:['haengbokada','seulpeuda','hwanada','pigonhada'],explanation:'"To be happy".',breakdown:'행복 = happiness, 하다 = be',examples:[{k:'나는 행복해.',r:'naneun haengbokhae',m:'I am happy.'}]},
+  {id:'w120',deck:'words',korean:'슬프다',answer:'seulpeuda',options:['seulpeuda','haengbokada','hwanada','gippeuda'],explanation:'"To be sad".',breakdown:'슬프다 = sad',examples:[{k:'영화가 슬프다',r:'yeonghwaga seulpeuda',m:'the movie is sad'}]},
+  {id:'w121',deck:'words',korean:'화나다',answer:'hwanada',options:['hwanada','haengbokada','seulpeuda','gippeuda'],explanation:'"To be angry".',breakdown:'화 = anger, 나다 = arise',examples:[{k:'왜 화났어요?',r:'wae hwanasseoyo',m:'Why are you angry?'}]},
+  {id:'w122',deck:'words',korean:'기쁘다',answer:'gippeuda',options:['gippeuda','seulpeuda','hwanada','pigonhada'],explanation:'"To be glad/delighted".',breakdown:'기쁘다 = joyful',examples:[{k:'만나서 기쁘다',r:'mannaseo gippeuda',m:'glad to meet you'}]},
   {id:'w123',deck:'words',korean:'무섭다',answer:'museopda',options:['museopda','gwiyeopda','jaemiitda','seulpeuda'],explanation:'"To be scary/scared".',breakdown:'무섭다 = scary',examples:[{k:'영화가 무서워요.',r:'yeonghwaga museowo yo',m:'The movie is scary.'}]},
-  {id:'w124',deck:'words',korean:'oryeopda',answer:'oryeopda',options:['oryeopda','swipda','jaemiitda','seulpeuda'],explanation:'"To be difficult".',breakdown:'어렵다 = difficult',examples:[{k:'한국어가 어려워요.',r:'hangugeoga oryeowoyo',m:'Korean is difficult.'}]},
-  {id:'w125',deck:'words',korean:'swipda',answer:'swipda',options:['swipda','oryeopda','jaemiitda','seulpeuda'],explanation:'"To be easy".',breakdown:'쉽다 = easy',examples:[{k:'이게 쉬워요.',r:'ige swiwoyo',m:'This is easy.'}]},
+  {id:'w124',deck:'words',korean:'어렵다',answer:'oryeopda',options:['oryeopda','swipda','jaemiitda','seulpeuda'],explanation:'"To be difficult".',breakdown:'어렵다 = difficult',examples:[{k:'한국어가 어려워요.',r:'hangugeoga oryeowoyo',m:'Korean is difficult.'}]},
+  {id:'w125',deck:'words',korean:'쉽다',answer:'swipda',options:['swipda','oryeopda','jaemiitda','seulpeuda'],explanation:'"To be easy".',breakdown:'쉽다 = easy',examples:[{k:'이게 쉬워요.',r:'ige swiwoyo',m:'This is easy.'}]},
   {id:'w126',deck:'words',korean:'새로운',answer:'saeroun',options:['saeroun','oraedoen','iksukhan','isanghan'],explanation:'"New".',breakdown:'새 = new, -로운 = adjective suffix',examples:[{k:'새로운 친구',r:'saeroun chingu',m:'new friend'}]},
-  {id:'w127',deck:'words',korean:'oraedoen',answer:'oraedoen',options:['oraedoen','saeroun','iksukhan','isanghan'],explanation:'"Old/aged".',breakdown:'오래 = long time, 된 = become',examples:[{k:'오래된 책',r:'oraedoen chaek',m:'old book'}]},
-  {id:'w128',deck:'words',korean:'jungyohada',answer:'jungyohada',options:['jungyohada','piryohada','ganeunghada','oryeopda'],explanation:'"To be important".',breakdown:'중요 = importance, 하다 = be',examples:[{k:'공부가 중요해요.',r:'gongbuga jungyohaeyo',m:'Studying is important.'}]},
-  {id:'w129',deck:'words',korean:'piryohada',answer:'piryohada',options:['piryohada','jungyohada','ganeunghada','oryeopda'],explanation:'"To be necessary/need".',breakdown:'필요 = need, 하다 = be',examples:[{k:'도움이 필요해요.',r:'doumi piryohaeyo',m:'I need help.'}]},
-  {id:'w130',deck:'words',korean:'ganeunghada',answer:'ganeunghada',options:['ganeunghada','bulganeunghada','jungyohada','piryohada'],explanation:'"To be possible".',breakdown:'가능 = possible, 하다 = be',examples:[{k:'가능해요.',r:'ganeunghaeyo',m:'It\'s possible.'}]},
+  {id:'w127',deck:'words',korean:'오래된',answer:'oraedoen',options:['oraedoen','saeroun','iksukhan','isanghan'],explanation:'"Old/aged".',breakdown:'오래 = long time, 된 = become',examples:[{k:'오래된 책',r:'oraedoen chaek',m:'old book'}]},
+  {id:'w128',deck:'words',korean:'중요하다',answer:'jungyohada',options:['jungyohada','piryohada','ganeunghada','oryeopda'],explanation:'"To be important".',breakdown:'중요 = importance, 하다 = be',examples:[{k:'공부가 중요해요.',r:'gongbuga jungyohaeyo',m:'Studying is important.'}]},
+  {id:'w129',deck:'words',korean:'필요하다',answer:'piryohada',options:['piryohada','jungyohada','ganeunghada','oryeopda'],explanation:'"To be necessary/need".',breakdown:'필요 = need, 하다 = be',examples:[{k:'도움이 필요해요.',r:'doumi piryohaeyo',m:'I need help.'}]},
+  {id:'w130',deck:'words',korean:'가능하다',answer:'ganeunghada',options:['ganeunghada','bulganeunghada','jungyohada','piryohada'],explanation:'"To be possible".',breakdown:'가능 = possible, 하다 = be',examples:[{k:'가능해요.',r:'ganeunghaeyo',m:'It\'s possible.'}]},
   {id:'w131',deck:'words',korean:'정말',answer:'jeongmal',options:['jeongmal','jinjja','ama','jeongdo'],explanation:'"Really/truly".',breakdown:'정말 = really',examples:[{k:'정말요?',r:'jeongmalyo',m:'Really?'}]},
-  {id:'w132',deck:'words',korean:'jinjja',answer:'jinjja',options:['jinjja','jeongmal','ama','geunyang'],explanation:'"Really/genuine" (emphatic, informal).',breakdown:'진짜 = real/genuine',examples:[{k:'진짜예요.',r:'jinjjayeyo',m:'It\'s real / Seriously.'}]},
-  {id:'w133',deck:'words',korean:'ama',answer:'ama',options:['ama','ajik','imi','tto'],explanation:'"Maybe/perhaps".',breakdown:'아마 = maybe',examples:[{k:'아마 괜찮을 거예요.',r:'ama gwaenchanheul geoyeyo',m:'It\'ll probably be okay.'}]},
-  {id:'w134',deck:'words',korean:'ajik',answer:'ajik',options:['ajik','imi','ama','beolsseo'],explanation:'"Still/yet".',breakdown:'아직 = still/yet',examples:[{k:'아직 몰라요.',r:'ajik molrayo',m:'I still don\'t know.'}]},
-  {id:'w135',deck:'words',korean:'imi',answer:'imi',options:['imi','ajik','beolsseo','ama'],explanation:'"Already".',breakdown:'이미 = already',examples:[{k:'이미 알아요.',r:'imi arayo',m:'I already know.'}]},
-  {id:'w136',deck:'words',korean:'gachi',answer:'gachi',options:['gachi','honja','ttaro','hamkke'],explanation:'"Together".',breakdown:'같이 = together (same as 함께)',examples:[{k:'같이 가요.',r:'gachi gayo',m:'Let\'s go together.'}]},
-  {id:'w137',deck:'words',korean:'honja',answer:'honja',options:['honja','gachi','hamkke','ttaro'],explanation:'"Alone/by oneself".',breakdown:'혼자 = alone',examples:[{k:'혼자 살아요.',r:'honja sarayo',m:'I live alone.'}]},
-  {id:'w138',deck:'words',korean:'cheoncheonhi',answer:'cheoncheonhi',options:['cheoncheonhi','ppalli','jogeum','mani'],explanation:'"Slowly".',breakdown:'천천 = slow, 히 = adverb suffix',examples:[{k:'천천히 말해 주세요.',r:'cheoncheonhi malhae juseyo',m:'Please speak slowly.'}]},
-  {id:'w139',deck:'words',korean:'ppalli',answer:'ppalli',options:['ppalli','cheoncheonhi','jogeum','najunge'],explanation:'"Quickly/fast".',breakdown:'빨리 = quickly',examples:[{k:'빨리 와!',r:'ppalli wa',m:'Come quickly!'}]},
-  {id:'w140',deck:'words',korean:'jogeum',answer:'jogeum',options:['jogeum','mani','ppalli','cheoncheonhi'],explanation:'"A little/a bit".',breakdown:'조금 = a little',examples:[{k:'조금만요.',r:'jogeummanyo',m:'Just a little.'}]},
-  {id:'w141',deck:'words',korean:'mani',answer:'mani',options:['mani','jogeum','ppalli','cheoncheonhi'],explanation:'"A lot/much".',breakdown:'많이 = a lot (많다 adverb form)',examples:[{k:'많이 드세요.',r:'mani deuseyo',m:'Please eat a lot.'}]},
+  {id:'w132',deck:'words',korean:'진짜',answer:'jinjja',options:['jinjja','jeongmal','ama','geunyang'],explanation:'"Really/genuine" (emphatic, informal).',breakdown:'진짜 = real/genuine',examples:[{k:'진짜예요.',r:'jinjjayeyo',m:'It\'s real / Seriously.'}]},
+  {id:'w133',deck:'words',korean:'아마',answer:'ama',options:['ama','ajik','imi','tto'],explanation:'"Maybe/perhaps".',breakdown:'아마 = maybe',examples:[{k:'아마 괜찮을 거예요.',r:'ama gwaenchanheul geoyeyo',m:'It\'ll probably be okay.'}]},
+  {id:'w134',deck:'words',korean:'아직',answer:'ajik',options:['ajik','imi','ama','beolsseo'],explanation:'"Still/yet".',breakdown:'아직 = still/yet',examples:[{k:'아직 몰라요.',r:'ajik molrayo',m:'I still don\'t know.'}]},
+  {id:'w135',deck:'words',korean:'이미',answer:'imi',options:['imi','ajik','beolsseo','ama'],explanation:'"Already".',breakdown:'이미 = already',examples:[{k:'이미 알아요.',r:'imi arayo',m:'I already know.'}]},
+  {id:'w136',deck:'words',korean:'같이',answer:'gachi',options:['gachi','honja','ttaro','hamkke'],explanation:'"Together".',breakdown:'같이 = together (same as 함께)',examples:[{k:'같이 가요.',r:'gachi gayo',m:'Let\'s go together.'}]},
+  {id:'w137',deck:'words',korean:'혼자',answer:'honja',options:['honja','gachi','hamkke','ttaro'],explanation:'"Alone/by oneself".',breakdown:'혼자 = alone',examples:[{k:'혼자 살아요.',r:'honja sarayo',m:'I live alone.'}]},
+  {id:'w138',deck:'words',korean:'천천히',answer:'cheoncheonhi',options:['cheoncheonhi','ppalli','jogeum','mani'],explanation:'"Slowly".',breakdown:'천천 = slow, 히 = adverb suffix',examples:[{k:'천천히 말해 주세요.',r:'cheoncheonhi malhae juseyo',m:'Please speak slowly.'}]},
+  {id:'w139',deck:'words',korean:'빨리',answer:'ppalli',options:['ppalli','cheoncheonhi','jogeum','najunge'],explanation:'"Quickly/fast".',breakdown:'빨리 = quickly',examples:[{k:'빨리 와!',r:'ppalli wa',m:'Come quickly!'}]},
+  {id:'w140',deck:'words',korean:'조금',answer:'jogeum',options:['jogeum','mani','ppalli','cheoncheonhi'],explanation:'"A little/a bit".',breakdown:'조금 = a little',examples:[{k:'조금만요.',r:'jogeummanyo',m:'Just a little.'}]},
+  {id:'w141',deck:'words',korean:'많이',answer:'mani',options:['mani','jogeum','ppalli','cheoncheonhi'],explanation:'"A lot/much".',breakdown:'많이 = a lot (많다 adverb form)',examples:[{k:'많이 드세요.',r:'mani deuseyo',m:'Please eat a lot.'}]},
   {id:'w142',deck:'words',korean:'어서 오세요',answer:'eoseo oseyo',options:['eoseo oseyo','jal ga','annyeong','gamsahamnida'],explanation:'"Welcome!" — greeting in stores. Literally "please come quickly".',breakdown:'어서 = quickly, 오세요 = please come',examples:[{k:'어서 오세요!',r:'eoseo oseyo',m:'Welcome!'}]},
   {id:'w143',deck:'words',korean:'잘 부탁드립니다',answer:'jal butakdeurimnida',options:['jal butakdeurimnida','gamsahamnida','mianhamnida','annyeonghaseyo'],explanation:'"I humbly ask for your favor" — used when starting a relationship.',breakdown:'잘 = well, 부탁 = request, 드립니다 = humble give',examples:[{k:'앞으로 잘 부탁드립니다.',r:'apeuro jal butakdeurimnida',m:'I look forward to working with you.'}]},
   {id:'w144',deck:'words',korean:'처음 뵙겠습니다',answer:'cheoeum boepgessseumnida',options:['cheoeum boepgessseumnida','annyeonghaseyo','gamsahamnida','jal ga'],explanation:'"How do you do?" — very formal first meeting.',breakdown:'처음 = first time, 뵙겠습니다 = humble "see"',examples:[{k:'처음 뵙겠습니다.',r:'cheoeum boepgesseumnida',m:'Pleased to meet you. (formal)'}]},
@@ -784,7 +791,7 @@ const CARDS = [
   {id:'w147',deck:'words',korean:'어떻게 지내세요',answer:'eotteoke jinaeseyo',options:['eotteoke jinaeseyo','annyeonghaseyo','gamsahamnida','jal jinaeyo'],explanation:'"How are you?" (polite)',breakdown:'어떻게 = how, 지내세요 = are you doing',examples:[{k:'요즘 어떻게 지내세요?',r:'yojeum eotteoke jinaeseyo',m:'How have you been lately?'}]},
   {id:'w148',deck:'words',korean:'잘 지내요',answer:'jal jinaeyo',options:['jal jinaeyo','gamsahamnida','mianhaeyo','moreugesseoyo'],explanation:'"I\'m doing well" (polite)',breakdown:'잘 = well, 지내요 = am doing (living)',examples:[{k:'잘 지내요, 고마워요.',r:'jal jinaeyo, gomawoyo',m:'I\'m doing well, thank you.'}]},
   {id:'w149',deck:'words',korean:'배우다',answer:'bauda',options:['bauda','garuichida','gongbuhada','alda'],explanation:'"To learn".',breakdown:'배우다 = learn',examples:[{k:'한국어를 배우다',r:'hangugeoreul bauda',m:'learn Korean'}]},
-  {id:'w150',deck:'words',korean:'garuichida',answer:'garuichida',options:['garuichida','bauda','gongbuhada','alda'],explanation:'"To teach".',breakdown:'가르치다 = teach',examples:[{k:'영어를 가르치다',r:'yeongeoreul garuichida',m:'teach English'}]},
+  {id:'w150',deck:'words',korean:'가르치다',answer:'garuichida',options:['garuichida','bauda','gongbuhada','alda'],explanation:'"To teach".',breakdown:'가르치다 = teach',examples:[{k:'영어를 가르치다',r:'yeongeoreul garuichida',m:'teach English'}]},
   {id:'w151',deck:'words',korean:'도와주다',answer:'dowajuda',options:['dowajuda','chatda','gidarida','mannada'],explanation:'"To help".',breakdown:'도와 = help, 주다 = give',examples:[{k:'저 좀 도와주세요.',r:'jeo jom dowajuseyo',m:'Please help me.'}]},
   {id:'w152',deck:'words',korean:'고르다',answer:'goreuda',options:['goreuda','chatda','sada','boda'],explanation:'"To choose/select".',breakdown:'고르다 = choose',examples:[{k:'음식을 고르다',r:'eumsigeul goreuda',m:'choose food'}]},
   {id:'w153',deck:'words',korean:'연락하다',answer:'yeollakada',options:['yeollakada','mannada','iyagihada','chatda'],explanation:'"To contact".',breakdown:'연락 = contact, 하다 = do',examples:[{k:'나중에 연락해요.',r:'najunge yeollakaeyo',m:'Contact me later.'}]},
@@ -804,7 +811,8 @@ function defaultState() {
     currentDeck: 'vowels',
     currentIndex: 0,
     answered: {},       // { cardId: chosenOption }
-    deckOrder: []       // shuffled card ID order for current deck
+    deckOrder: [],      // shuffled card ID order for current deck
+    wrongIds: []        // card IDs ever answered wrong (persists across sessions)
   };
 }
 
@@ -840,6 +848,9 @@ function updateSRS(id, correct) {
   } else {
     p.wrongCount++;
     p.masteryLevel = Math.max(p.masteryLevel - 1, 0);
+    // Add to wrong tracker if not already there
+    if (!STATE.wrongIds) STATE.wrongIds = [];
+    if (!STATE.wrongIds.includes(id)) STATE.wrongIds.push(id);
   }
   p.nextReview = now + SRS_INTERVALS[correct ? p.masteryLevel : 0];
   STATE.progress[id] = p;
@@ -882,6 +893,10 @@ function shuffle(arr) {
 }
 
 function getDeckCards(deck) {
+  if (deck === 'wrong') {
+    const ids = STATE.wrongIds || [];
+    return ids.map(id => CARDS.find(c => c.id === id)).filter(Boolean);
+  }
   return CARDS.filter(c => c.deck === deck);
 }
 
@@ -889,10 +904,26 @@ function initQuiz(deck) {
   STATE.currentDeck = deck;
   STATE.currentIndex = 0;
   STATE.answered = STATE.answered || {};
-  // Shuffle the deck order for this session
   const cards = getDeckCards(deck);
   STATE.deckOrder = shuffle(cards.map(c => c.id));
   saveState();
+  renderQuiz();
+}
+
+function restartDeck() {
+  const deck = STATE.currentDeck;
+  // Clear answered for cards in this deck only
+  const cards = getDeckCards(deck);
+  cards.forEach(c => { delete STATE.answered[c.id]; });
+  // If restarting a regular deck, remove those cards from the wrong tracker
+  if (deck !== 'wrong') {
+    const deckIds = new Set(cards.map(c => c.id));
+    STATE.wrongIds = (STATE.wrongIds || []).filter(id => !deckIds.has(id));
+  }
+  STATE.currentIndex = 0;
+  STATE.deckOrder = shuffle(cards.map(c => c.id));
+  saveState();
+  buildDeckSelector(); // refresh wrong count badge
   renderQuiz();
 }
 
@@ -906,7 +937,20 @@ function getCurrentDeck() {
 
 function renderQuiz() {
   const deck = getCurrentDeck();
-  if (!deck.length) return;
+  if (!deck.length) {
+    // Empty state
+    document.getElementById('cardKorean').textContent = STATE.currentDeck === 'wrong' ? '✓' : '—';
+    document.getElementById('cardDeckTag').textContent = '';
+    document.getElementById('cardHint').textContent = STATE.currentDeck === 'wrong' ? 'No wrong answers yet!' : '';
+    document.getElementById('optionsGrid').innerHTML = '';
+    document.getElementById('feedbackArea').innerHTML = '';
+    document.getElementById('progressFill').style.width = '0%';
+    document.getElementById('progressLabel').textContent = '0 / 0';
+    document.getElementById('prevBtn').disabled = true;
+    document.getElementById('nextBtn').disabled = true;
+    document.getElementById('nextUnansweredBtn').disabled = true;
+    return;
+  }
   const idx = Math.max(0, Math.min(STATE.currentIndex, deck.length - 1));
   const card = deck[idx];
 
@@ -1001,6 +1045,7 @@ function handleAnswer(chosen, card) {
   // Update options + show feedback WITHOUT re-rendering the question card
   applyAnswer(card, chosen);
   saveState();
+  buildDeckSelector();
   updateGardenBadge();
   updateDueBadge();
 }
@@ -1298,6 +1343,21 @@ function buildDeckSelector() {
     };
     sel.appendChild(btn);
   });
+
+  // Wrong answers deck — only show if there are any
+  const wrongCount = (STATE.wrongIds || []).length;
+  const wrongBtn = document.createElement('button');
+  wrongBtn.id = 'wrongDeckBtn';
+  wrongBtn.className = 'deck-btn wrong-deck-btn' + (STATE.currentDeck === 'wrong' ? ' active' : '');
+  wrongBtn.innerHTML = '✗ Wrong Answers' + (wrongCount > 0 ? ` <span class="wrong-count">${wrongCount}</span>` : '');
+  wrongBtn.disabled = wrongCount === 0;
+  wrongBtn.onclick = () => {
+    document.querySelectorAll('.deck-btn').forEach(b => b.classList.remove('active'));
+    wrongBtn.classList.add('active');
+    STATE.answered = {};
+    initQuiz('wrong');
+  };
+  sel.appendChild(wrongBtn);
 }
 
 /* ============================================================
@@ -1332,13 +1392,7 @@ document.getElementById('nextUnansweredBtn').onclick = () => {
   const next = deck.findIndex((c, i) => i > STATE.currentIndex && STATE.answered[c.id] === undefined);
   if (next !== -1) { STATE.currentIndex = next; renderQuiz(); }
 };
-document.getElementById('restartBtn').onclick = () => {
-  STATE.answered = {};
-  STATE.currentIndex = 0;
-  saveState();
-  renderQuiz();
-};
-
+document.getElementById('restartBtn').onclick = () => restartDeck();
 // Drill controls
 document.getElementById('revealAllBtn').onclick = revealAll;
 document.getElementById('refreshDrillBtn').onclick = renderDrill;
